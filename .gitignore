@@ -1,6 +1,20 @@
+# Backend
+backend/node_modules/
+backend/.env
+backend/uploads/
+backend/.env.local
+
+# Frontend
+frontend/node_modules/
+frontend/.env
+frontend/.env.local
+frontend/build/
+
+# General
 node_modules/
 .env
 .DS_Store
 *.log
-build/
+.vscode/
+.idea/
 dist/
