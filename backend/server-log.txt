@@ -1,0 +1,14 @@
+[dotenv@17.3.1] injecting env (3) from .env -- tip: 🤖 agentic secret storage: https://dotenvx.com/as2
+backend JWT_SECRET loaded: true thefo
+[dotenv@17.3.1] injecting env (0) from .env -- tip: ⚙️  specify custom .env file path with { path: '/custom/path/.env' }
+Server is running on http://localhost:5000
+PostgreSQL Connected: 2026-04-06T12:22:20.155Z
+post route middleware: GET /api/posts auth user id: undefined
+auth middleware verifying token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzc1NDc4MTUwLCJleHAiOjE3NzYwODI5NTB9.JhzMetrxjpnLTWSLX0eEKKXcPz3TF8Ju_OUiZYUVDEI
+auth middleware JWT_SECRET loaded: true
+auth middleware decoded: { id: 1, iat: 1775478150, exp: 1776082950 }
+post route middleware: POST /api/posts auth user id: undefined
+auth middleware verifying token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzc1NDc4MTUwLCJleHAiOjE3NzYwODI5NTB9.JhzMetrxjpnLTWSLX0eEKKXcPz3TF8Ju_OUiZYUVDEI
+auth middleware JWT_SECRET loaded: true
+auth middleware decoded: { id: 1, iat: 1775478150, exp: 1776082950 }
+^C

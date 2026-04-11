@@ -1,0 +1,120 @@
+import React, { useState, useEffect } from 'react';
+
+const maze = [
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+    [1,0,0,0,1,0,0,0,1,0,0,0,1,0,1],
+    [1,1,1,0,1,0,1,0,1,0,1,0,1,0,1],
+    [1,0,0,0,1,0,1,0,0,0,1,0,1,0,1],
+    [1,0,1,1,1,0,1,1,1,0,1,1,1,0,1],
+    [1,0,1,0,0,0,0,0,1,0,0,0,1,0,1],
+    [1,0,1,0,1,1,1,0,1,1,1,0,1,0,1],
+    [1,0,0,0,1,0,0,0,0,0,1,0,0,0,1],
+    [1,1,1,0,1,0,1,1,1,0,1,1,1,0,1],
+    [1,0,0,0,0,0,1,0,0,0,0,0,1,0,1],
+    [1,0,1,1,1,0,1,1,1,1,1,0,1,0,1],
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+];
+
+function MazeGame() {
+
+  const startPos = { x: 1, y: 1 };
+  const end = { x: 13, y: 10 };
+
+  const [pos, setPos] = useState(startPos);
+  const [active, setActive] = useState(false);
+  const [time, setTime] = useState(0);
+
+  const win = pos.x === end.x && pos.y === end.y;
+
+  // Movement
+  useEffect(() => {
+    const walk = (e) => {
+
+      if (!active || win) return;
+
+      const keys = {
+        ArrowUp: [0,-1],
+        ArrowDown: [0,1],
+        ArrowLeft: [-1,0],
+        ArrowRight: [1,0]
+      };
+
+      if (keys[e.key]) {
+        e.preventDefault();
+        const [dx,dy] = keys[e.key];
+
+        if (maze[pos.y + dy][pos.x + dx] === 0) {
+          setPos({ x: pos.x + dx, y: pos.y + dy });
+        }
+      }
+    };
+
+    window.addEventListener('keydown', walk);
+    return () => window.removeEventListener('keydown', walk);
+
+  }, [pos, active, win]);
+
+
+  // Timer
+  useEffect(() => {
+
+    let timer;
+
+    if (active && !win) {
+      timer = setInterval(() => {
+        setTime(t => t + 1);
+      },1000);
+    }
+
+    return () => clearInterval(timer);
+
+  }, [active, win]);
+
+
+  // Reset game
+  function resetGame() {
+    setPos(startPos);
+    setTime(0);
+    setActive(true);
+  }
+
+  return (
+    <section className="cat-maze-section">
+
+      {!active ? (
+        <button onClick={() => setActive(true)}>🎮 Start Maze Game</button>
+      ) : (
+        <>
+          <h3>⏱ Time: {time}s</h3>
+
+          <div id="maze-container">
+            {maze.map((row,y) =>
+              row.map((cell,x) => (
+                <div
+                  key={`${x}-${y}`}
+                  className={`cell ${cell === 1 ? 'wall' : 'path'} ${x === end.x && y === end.y ? 'end' : ''}`}
+                >
+
+                  {x === pos.x && y === pos.y &&
+                    <img src="assets/cat-icon.png" alt="cat" style={{width:'30px'}}/>
+                  }
+
+                </div>
+              ))
+            )}
+          </div>
+        </>
+      )}
+
+      {win && (
+        <>
+          <p className="success">🎉 You Escaped in {time} seconds!</p>
+          <button onClick={resetGame}>🔁 Play Again</button>
+        </>
+      )}
+
+    </section>
+  );
+}
+
+export default MazeGame;
