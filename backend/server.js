@@ -62,18 +62,24 @@ const ensureAdminUser = async () => {
 };
 
 mongoose.connection.on('connected', async () => {
-  console.log('MongoDB Connected');
+  console.log('✓ MongoDB Connected');
   await ensureAdminUser();
   const PORT = process.env.PORT || 5000;
   app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+    console.log(`✓ Server is running on port ${PORT}`);
   });
 });
 
-// Add timeout in case MongoDB connection hangs
+// Fallback timeout if connection doesn't complete
+let connectionStarted = false;
+mongoose.connection.on('connecting', () => {
+  console.log('Attempting to connect to MongoDB...');
+  connectionStarted = true;
+});
+
 setTimeout(() => {
-  if (mongoose.connection.readyState !== 1) {
-    console.error('MongoDB connection timeout - not connected after 10 seconds');
+  if (!connectionStarted || mongoose.connection.readyState !== 1) {
+    console.error('✗ MongoDB connection timeout - not connected after 15 seconds');
     process.exit(1);
   }
-}, 10000);
+}, 15000);
