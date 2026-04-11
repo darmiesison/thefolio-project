@@ -15,9 +15,15 @@ const app = express();
 //──Middleware─────────────────────────────────────────────────
 //AllowReact(port3000)tocall this server
 app.use(cors({ 
-  origin: process.env.FRONTEND_URL || "http://localhost:3000", 
+  origin: [
+    'http://localhost:3000',
+    'https://thefolio.vercel.app'  // your Vercel URL (update after deployment)
+  ], 
   credentials: true 
 }));
+
+// Or allow all origins during development/testing:
+// app.use(cors());  - use this temporarily if you are unsure of your Vercel URL
 //ParseincomingJSONrequestbodies
 app.use(express.json());
 //Serveuploadedimagefilesaspublic URLs
