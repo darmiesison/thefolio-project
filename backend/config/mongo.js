@@ -7,8 +7,9 @@ console.log('MongoDB connection URI:', MONGO_URI ? 'Set' : 'Not set');
 console.log('Attempting MongoDB connection...');
 
 mongoose.connect(MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
+  // Remove deprecated options - they're no longer needed in mongoose 6+
+  serverSelectionTimeoutMS: 5000,
+  socketTimeoutMS: 45000,
 });
 
 mongoose.connection.on('connected', () => {
