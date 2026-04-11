@@ -100,12 +100,3 @@ router.delete('/posts/:id', async (req, res) => {
 });
 
 module.exports = router;
-      return res.status(404).json({ message: 'Post not found' });
-
-    res.json({ message: 'Post has been removed', post: result.rows[0] });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
-
-module.exports = router;
