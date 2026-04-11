@@ -1,6 +1,7 @@
 require("dotenv").config();
 console.log('backend cwd:', process.cwd());
 console.log('backend JWT_SECRET loaded:', !!process.env.JWT_SECRET);
+console.log('backend MONGO_URI loaded:', !!process.env.MONGO_URI);
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
@@ -68,3 +69,11 @@ mongoose.connection.on('connected', async () => {
     console.log(`Server is running on http://localhost:${PORT}`);
   });
 });
+
+// Add timeout in case MongoDB connection hangs
+setTimeout(() => {
+  if (mongoose.connection.readyState !== 1) {
+    console.error('MongoDB connection timeout - not connected after 10 seconds');
+    process.exit(1);
+  }
+}, 10000);
