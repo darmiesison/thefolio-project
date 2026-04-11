@@ -1,16 +1,11 @@
-// backend/routes/post.routes.js
 const express = require('express');
-const pool = require('../config/db');
+const CatPost = require('../models/CatPost');
+const User = require('../models/User');
 const { protect } = require('../middleware/auth.middleware');
 const { memberOrAdmin } = require('../middleware/role.middleware');
 const upload = require('../middleware/upload');
 
 const router = express.Router();
-
-router.use((req, res, next) => {
-  console.log('post route middleware:', req.method, req.originalUrl, 'auth user id:', req.user?.id);
-  next();
-});
 
 const buildImageUrl = (req, image) => {
   if (!image) return '';
@@ -18,86 +13,137 @@ const buildImageUrl = (req, image) => {
   return `${req.protocol}://${req.get('host')}/uploads/${image}`;
 };
 
+// GET /api/posts
 router.get('/', protect, async (req, res) => {
-  console.log('GET /posts route reached:', req.user?.id, req.user?.role);
   try {
-    const result = await pool.query(
-      `SELECT p.*, u.name AS author_name, u.profile_pic AS author_pic,
-              COUNT(DISTINCT l.id) AS likes,
-              MAX(CASE WHEN l.user_id = $1 THEN 1 ELSE 0 END)::boolean AS liked,
-              COUNT(DISTINCT c.id) AS comments_count
-       FROM posts p
-       JOIN users u ON p.user_id = u.id
-       LEFT JOIN likes l ON l.post_id = p.id
-       LEFT JOIN comments c ON c.post_id = p.id
-       GROUP BY p.id, u.name, u.profile_pic
-       ORDER BY p.created_at DESC`,
-      [req.user.id]
-    );
-
-    const posts = result.rows.map((row) => ({
-      ...row,
-      likes: Number(row.likes),
-      comments_count: Number(row.comments_count),
-      author_pic: buildImageUrl(req, row.author_pic),
-      image_url: buildImageUrl(req, row.image_url),
+    const posts = await CatPost.find().sort({ createdAt: -1 });
+    const enrichedPosts = await Promise.all(posts.map(async (post) => {
+      const author = await User.findById(post.authorId).select('name profile_pic');
+      const postObj = post.toObject();
+      return {
+        ...postObj,
+        author_name: author?.name || 'Unknown',
+        author_pic: author?.profile_pic ? buildImageUrl(req, author.profile_pic) : '',
+        image_url: buildImageUrl(req, post.image),
+        liked: post.likedBy.includes(req.user.id),
+        likes: post.likedBy.length,
+        comments_count: post.comments.length
+      };
     }));
-
-    res.json(posts);
+    res.json(enrichedPosts);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
 
-router.get('/my-posts', protect, async (req, res) => {
-  console.log('GET /posts/my-posts route reached:', req.user?.id);
-  try {
-    const result = await pool.query(
-      `SELECT p.*, u.name AS author_name, u.profile_pic AS author_pic,
-              COUNT(DISTINCT l.id) AS likes,
-              true AS liked,
-              COUNT(DISTINCT c.id) AS comments_count
-       FROM posts p
-       JOIN users u ON p.user_id = u.id
-       LEFT JOIN likes l ON l.post_id = p.id
-       LEFT JOIN comments c ON c.post_id = p.id
-       WHERE p.user_id = $1
-       GROUP BY p.id, u.name, u.profile_pic
-       ORDER BY p.created_at DESC`,
-      [req.user.id]
-    );
-
-    const posts = result.rows.map((row) => ({
-      ...row,
-      likes: Number(row.likes),
-      comments_count: Number(row.comments_count),
-      author_pic: buildImageUrl(req, row.author_pic),
-      image_url: buildImageUrl(req, row.image_url),
-    }));
-
-    res.json(posts);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
-
+// GET /api/posts/:id
 router.get('/:id', protect, async (req, res) => {
   try {
-    const result = await pool.query(
-      `SELECT p.*, u.name AS author_name, u.profile_pic AS author_pic,
-              COUNT(DISTINCT l.id) AS likes,
-              MAX(CASE WHEN l.user_id = $2 THEN 1 ELSE 0 END)::boolean AS liked,
-              COUNT(DISTINCT c.id) AS comments_count
-       FROM posts p
-       JOIN users u ON p.user_id = u.id
-       LEFT JOIN likes l ON l.post_id = p.id
-       LEFT JOIN comments c ON c.post_id = p.id
-       WHERE p.id = $1
-       GROUP BY p.id, u.name, u.profile_pic`,
-      [req.params.id, req.user.id]
-    );
-    if (result.rows.length === 0)
-      return res.status(404).json({ message: 'Post not found' });
+    const post = await CatPost.findById(req.params.id);
+    if (!post) return res.status(404).json({ message: 'Post not found' });
+    
+    const author = await User.findById(post.authorId).select('name profile_pic');
+    const postObj = post.toObject();
+    res.json({
+      ...postObj,
+      author_name: author?.name || 'Unknown',
+      author_pic: author?.profile_pic ? buildImageUrl(req, author.profile_pic) : '',
+      image_url: buildImageUrl(req, post.image),
+      liked: post.likedBy.includes(req.user.id),
+      likes: post.likedBy.length,
+      comments_count: post.comments.length
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// POST /api/posts
+router.post('/', protect, memberOrAdmin, upload.single('image'), async (req, res) => {
+  try {
+    const { content } = req.body;
+    const image = req.file ? req.file.filename : '';
+    
+    const post = await CatPost.create({
+      authorId: req.user.id,
+      authorName: req.user.name,
+      authorPic: req.user.profile_pic || '',
+      content: content || '',
+      image: image
+    });
+    
+    const postObj = post.toObject();
+    res.status(201).json({
+      ...postObj,
+      author_name: req.user.name,
+      author_pic: buildImageUrl(req, req.user.profile_pic || ''),
+      image_url: buildImageUrl(req, image),
+      liked: false,
+      likes: 0,
+      comments_count: 0
+    });
+  } catch (err) {
+    console.error("Create post error:", err);
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// PUT /api/posts/:id
+router.put('/:id', protect, memberOrAdmin, async (req, res) => {
+  try {
+    const { content } = req.body;
+    const post = await CatPost.findById(req.params.id);
+    
+    if (!post) return res.status(404).json({ message: 'Post not found' });
+    if (post.authorId !== req.user.id && req.user.role !== 'admin')
+      return res.status(403).json({ message: 'Not authorized' });
+    
+    post.content = content || post.content;
+    await post.save();
+    
+    res.json(post);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// DELETE /api/posts/:id
+router.delete('/:id', protect, memberOrAdmin, async (req, res) => {
+  try {
+    const post = await CatPost.findById(req.params.id);
+    if (!post) return res.status(404).json({ message: 'Post not found' });
+    
+    if (post.authorId !== req.user.id && req.user.role !== 'admin')
+      return res.status(403).json({ message: 'Not authorized' });
+    
+    await CatPost.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Post deleted' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// POST /api/posts/:id/like
+router.post('/:id/like', protect, async (req, res) => {
+  try {
+    const post = await CatPost.findById(req.params.id);
+    if (!post) return res.status(404).json({ message: 'Post not found' });
+    
+    const idx = post.likedBy.indexOf(req.user.id);
+    if (idx > -1) {
+      post.likedBy.splice(idx, 1);
+    } else {
+      post.likedBy.push(req.user.id);
+    }
+    await post.save();
+    
+    res.json({ liked: idx === -1, likes: post.likedBy.length });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+module.exports = router;
 
     const row = result.rows[0];
     row.likes = Number(row.likes);

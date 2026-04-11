@@ -1,6 +1,6 @@
-// backend/routes/comment.routes.js
 const express = require('express');
-const pool = require('../config/db');
+const CatPost = require('../models/CatPost');
+const User = require('../models/User');
 const { protect } = require('../middleware/auth.middleware');
 const { memberOrAdmin } = require('../middleware/role.middleware');
 
@@ -9,14 +9,19 @@ const router = express.Router();
 // GET /api/comments/:postId
 router.get('/:postId', async (req, res) => {
   try {
-    const result = await pool.query(
-      `SELECT c.id, c.post_id, c.author_id, c.body AS content, c.created_at,
-              u.name AS author_name, u.profile_pic AS author_pic
-       FROM comments c JOIN users u ON c.author_id = u.id
-       WHERE c.post_id = $1 ORDER BY c.created_at ASC`,
-      [req.params.postId]
-    );
-    res.json(result.rows);
+    const post = await CatPost.findById(req.params.postId);
+    if (!post) return res.status(404).json({ message: 'Post not found' });
+    
+    const comments = await Promise.all(post.comments.map(async (comment) => {
+      const author = await User.findById(comment.authorId).select('name profile_pic');
+      return {
+        ...comment,
+        author_name: author?.name || 'Unknown',
+        author_pic: author?.profile_pic || ''
+      };
+    }));
+    
+    res.json(comments);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -25,34 +30,43 @@ router.get('/:postId', async (req, res) => {
 // POST /api/comments/:postId
 router.post('/:postId', protect, memberOrAdmin, async (req, res) => {
   try {
-    const result = await pool.query(
-      'INSERT INTO comments (post_id, author_id, body) VALUES ($1, $2, $3) RETURNING *',
-      [req.params.postId, req.user.id, req.body.body]
-    );
-    const comment = await pool.query(
-      `SELECT c.id, c.post_id, c.author_id, c.body AS content, c.created_at,
-              u.name AS author_name, u.profile_pic AS author_pic
-       FROM comments c JOIN users u ON c.author_id = u.id WHERE c.id = $1`,
-      [result.rows[0].id]
-    );
-    res.status(201).json(comment.rows[0]);
+    const { body } = req.body;
+    const post = await CatPost.findById(req.params.postId);
+    if (!post) return res.status(404).json({ message: 'Post not found' });
+    
+    const comment = {
+      commentId: Date.now().toString(),
+      authorId: req.user.id,
+      authorName: req.user.name,
+      authorPic: req.user.profile_pic || '',
+      body: body,
+      createdAt: new Date()
+    };
+    
+    post.comments.push(comment);
+    await post.save();
+    
+    res.status(201).json(comment);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
 
-// DELETE /api/comments/:id
-router.delete('/:id', protect, memberOrAdmin, async (req, res) => {
+// DELETE /api/comments/:postId/:commentId
+router.delete('/:postId/:commentId', protect, memberOrAdmin, async (req, res) => {
   try {
-    const comment = await pool.query('SELECT * FROM comments WHERE id = $1', [req.params.id]);
-    if (comment.rows.length === 0)
-      return res.status(404).json({ message: 'Comment not found' });
-
-    const isOwner = comment.rows[0].author_id === req.user.id;
-    if (!isOwner && req.user.role !== 'admin')
+    const post = await CatPost.findById(req.params.postId);
+    if (!post) return res.status(404).json({ message: 'Post not found' });
+    
+    const comment = post.comments.find(c => c.commentId === req.params.commentId);
+    if (!comment) return res.status(404).json({ message: 'Comment not found' });
+    
+    if (comment.authorId !== req.user.id && req.user.role !== 'admin')
       return res.status(403).json({ message: 'Not authorized' });
-
-    await pool.query('DELETE FROM comments WHERE id = $1', [req.params.id]);
+    
+    post.comments = post.comments.filter(c => c.commentId !== req.params.commentId);
+    await post.save();
+    
     res.json({ message: 'Comment deleted' });
   } catch (err) {
     res.status(500).json({ message: err.message });
