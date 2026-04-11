@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import API from '../api/axios'; // This is the "API" that was declared but not read
+import { Link } from "react-router-dom";
+import API from '../api/axios';
 
 function RegisterPage() {
-  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: "",
     email: "",

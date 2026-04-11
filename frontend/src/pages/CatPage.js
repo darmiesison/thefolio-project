@@ -35,11 +35,10 @@ function CatPage() {
     }
   };
 
+  // eslint-disable-next-line no-unused-vars
   const handleProfileImageChange = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
-    console.log("File selected:", file.name, file.type, file.size);
 
     const formData = new FormData();
     formData.append("profilePic", file);
@@ -140,8 +139,6 @@ function CatPage() {
   };
 
   const profilePicture = user?.profile_pic || "/assets/logo-cat.png";
-  const authorName = user?.name || user?.email || "Cat Lover";
-  const userPosts = posts.filter((post) => post.user_id === user?.id);
 
   return (
     <main className="cat-page">
