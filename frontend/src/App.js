@@ -31,7 +31,8 @@ function App() {
 
   return (
     <div className={`app-container ${theme}`}>
-      <Routes>
+      <div className="routes-wrapper">
+        <Routes>
         {/* 1. The Splash Page (No Navigation visible here) */}
         <Route path="/" element={<SplashPage />} />
 
@@ -189,6 +190,7 @@ function App() {
           }
         />
       </Routes>
+      </div>
     </div>
   );
 }
