@@ -42,6 +42,35 @@ router.get('/', protect, async (req, res) => {
   }
 });
 
+// GET /api/posts/my-posts - Get only current user's posts
+router.get('/my-posts', protect, async (req, res) => {
+  try {
+    // Ensure userId is a string for comparison
+    const userId = req.user.id && typeof req.user.id === 'object' && req.user.id.toString 
+      ? req.user.id.toString() 
+      : String(req.user.id);
+    
+    const posts = await CatPost.find({ authorId: userId }).sort({ createdAt: -1 });
+    const enrichedPosts = await Promise.all(posts.map(async (post) => {
+      const author = await User.findById(post.authorId).select('name profile_pic');
+      const postObj = post.toObject();
+      return {
+        ...postObj,
+        id: post._id.toString(),
+        author_name: author?.name || 'Unknown',
+        author_pic: author?.profile_pic ? buildImageUrl(req, author.profile_pic) : '',
+        image_url: buildImageUrl(req, post.image),
+        liked: post.likedBy.includes(userId),
+        likes: post.likedBy.length,
+        comments_count: post.comments.length
+      };
+    }));
+    res.json(enrichedPosts);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 // GET /api/posts/:id
 router.get('/:id', protect, async (req, res) => {
   try {
