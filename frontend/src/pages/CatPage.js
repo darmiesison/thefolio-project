@@ -150,7 +150,7 @@ function CatPage() {
           </div>
           <div>
             <h3>Create Post</h3>
-            <p>Share a cat story, photo, or update.</p>
+            <p>Share a photo or update.</p>
           </div>
         </div>
 
