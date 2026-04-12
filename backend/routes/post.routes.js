@@ -135,20 +135,41 @@ router.post('/', protect, memberOrAdmin, upload.single('image'), async (req, res
 });
 
 // PUT /api/posts/:id
-router.put('/:id', protect, memberOrAdmin, async (req, res) => {
+router.put('/:id', protect, memberOrAdmin, upload.single('image'), async (req, res) => {
   try {
     const { content } = req.body;
     const post = await CatPost.findById(req.params.id);
     
     if (!post) return res.status(404).json({ message: 'Post not found' });
-    if (post.authorId !== req.user.id && req.user.role !== 'admin')
+    
+    // Ensure userId is a string for safe comparison
+    const userId = req.user.id && typeof req.user.id === 'object' && req.user.id.toString 
+      ? req.user.id.toString() 
+      : String(req.user.id);
+    
+    const postAuthorId = post.authorId && typeof post.authorId === 'string' 
+      ? post.authorId 
+      : String(post.authorId);
+    
+    if (postAuthorId !== userId && req.user.role !== 'admin')
       return res.status(403).json({ message: 'Not authorized' });
     
     post.content = content || post.content;
     await post.save();
     
-    res.json(post);
+    const postObj = post.toObject();
+    res.json({
+      ...postObj,
+      id: post._id.toString(),
+      author_name: req.user.name,
+      author_pic: buildImageUrl(req, req.user.profile_pic || ''),
+      image_url: buildImageUrl(req, post.image),
+      liked: post.likedBy.includes(userId),
+      likes: post.likedBy.length,
+      comments_count: post.comments.length
+    });
   } catch (err) {
+    console.error("Update post error:", err);
     res.status(500).json({ message: err.message });
   }
 });
@@ -159,7 +180,16 @@ router.delete('/:id', protect, memberOrAdmin, async (req, res) => {
     const post = await CatPost.findById(req.params.id);
     if (!post) return res.status(404).json({ message: 'Post not found' });
     
-    if (post.authorId !== req.user.id && req.user.role !== 'admin')
+    // Ensure userId is a string for safe comparison
+    const userId = req.user.id && typeof req.user.id === 'object' && req.user.id.toString 
+      ? req.user.id.toString() 
+      : String(req.user.id);
+    
+    const postAuthorId = post.authorId && typeof post.authorId === 'string' 
+      ? post.authorId 
+      : String(post.authorId);
+    
+    if (postAuthorId !== userId && req.user.role !== 'admin')
       return res.status(403).json({ message: 'Not authorized' });
     
     await CatPost.findByIdAndDelete(req.params.id);
