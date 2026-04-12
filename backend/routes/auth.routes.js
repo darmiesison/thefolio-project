@@ -15,6 +15,13 @@ const generateToken = (id) => {
   return jwt.sign({ id: idString }, process.env.JWT_SECRET, { expiresIn: '7d' });
 };
 
+const buildImageUrl = (req, image) => {
+  if (!image) return '';
+  if (image.startsWith('http')) return image;
+  // Always use HTTPS for production
+  return `https://${req.get('host')}/uploads/${image}`;
+};
+
 // POST /api/auth/register
 router.post('/register', async (req, res) => {
   const { name, email, password } = req.body;
@@ -60,10 +67,6 @@ router.post('/login', async (req, res) => {
     if (!match)
       return res.status(400).json({ message: 'Invalid email or password' });
 
-    const profilePicUrl = user.profile_pic
-      ? `${req.protocol}://${req.get('host')}/uploads/${user.profile_pic}`
-      : "";
-
     res.json({
       token: generateToken(user._id.toString()),
       user: {
@@ -71,7 +74,7 @@ router.post('/login', async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
-        profile_pic: profilePicUrl,
+        profile_pic: buildImageUrl(req, user.profile_pic),
       },
     });
   } catch (err) {
@@ -86,9 +89,7 @@ router.get('/me', protect, async (req, res) => {
     if (!user) return res.status(404).json({ message: 'User not found' });
     
     const userData = user.toObject();
-    if (userData.profile_pic) {
-      userData.profile_pic = `${req.protocol}://${req.get('host')}/uploads/${userData.profile_pic}`;
-    }
+    userData.profile_pic = buildImageUrl(req, userData.profile_pic);
     res.json(userData);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -122,9 +123,7 @@ router.put('/profile', protect, upload.single('profilePic'), async (req, res) =>
     ).select('-password');
 
     const userData = user.toObject();
-    if (userData.profile_pic) {
-      userData.profile_pic = `${req.protocol}://${req.get('host')}/uploads/${userData.profile_pic}`;
-    }
+    userData.profile_pic = buildImageUrl(req, userData.profile_pic);
 
     res.json(userData);
   } catch (err) {

@@ -9,13 +9,13 @@ const router = express.Router();
 const buildUploadUrl = (req, filename) => {
   if (!filename) return '';
   if (filename.startsWith('http')) return filename;
-  return `${req.protocol}://${req.get('host')}/uploads/${filename}`;
+  return `https://${req.get('host')}/uploads/${filename}`;
 };
 
 const buildProfilePicUrl = (req, profilePicValue) => {
   if (!profilePicValue) return '';
   if (profilePicValue.startsWith('http')) return profilePicValue;
-  return `${req.protocol}://${req.get('host')}/uploads/${profilePicValue}`;
+  return `https://${req.get('host')}/uploads/${profilePicValue}`;
 };
 
 const buildPostResponse = (post, userId) => {

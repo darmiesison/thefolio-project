@@ -10,7 +10,12 @@ const router = express.Router();
 const buildImageUrl = (req, image) => {
   if (!image) return '';
   if (image.startsWith('http')) return image;
-  return `${req.protocol}://${req.get('host')}/uploads/${image}`;
+  
+  // For Render, always use HTTPS. Check X-Forwarded-Proto header for reverse proxy
+  const protocol = req.get('X-Forwarded-Proto') || req.protocol || 'https';
+  const host = req.get('host');
+  
+  return `https://${host}/uploads/${image}`;
 };
 
 // GET /api/posts
