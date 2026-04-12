@@ -22,6 +22,7 @@ router.get('/', protect, async (req, res) => {
       const postObj = post.toObject();
       return {
         ...postObj,
+        id: post._id.toString(),
         author_name: author?.name || 'Unknown',
         author_pic: author?.profile_pic ? buildImageUrl(req, author.profile_pic) : '',
         image_url: buildImageUrl(req, post.image),
@@ -46,6 +47,7 @@ router.get('/:id', protect, async (req, res) => {
     const postObj = post.toObject();
     res.json({
       ...postObj,
+      id: post._id.toString(),
       author_name: author?.name || 'Unknown',
       author_pic: author?.profile_pic ? buildImageUrl(req, author.profile_pic) : '',
       image_url: buildImageUrl(req, post.image),
@@ -84,6 +86,7 @@ router.post('/', protect, memberOrAdmin, upload.single('image'), async (req, res
     const postObj = post.toObject();
     res.status(201).json({
       ...postObj,
+      id: post._id.toString(),
       author_name: req.user.name,
       author_pic: buildImageUrl(req, req.user.profile_pic || ''),
       image_url: buildImageUrl(req, image),
