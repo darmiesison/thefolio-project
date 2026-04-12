@@ -34,9 +34,14 @@ router.post('/:postId', protect, memberOrAdmin, async (req, res) => {
     const post = await CatPost.findById(req.params.postId);
     if (!post) return res.status(404).json({ message: 'Post not found' });
     
+    // Ensure authorId is a string
+    const authorId = req.user.id && typeof req.user.id === 'object' && req.user.id.toString 
+      ? req.user.id.toString() 
+      : String(req.user.id);
+    
     const comment = {
       commentId: Date.now().toString(),
-      authorId: req.user.id,
+      authorId: authorId,
       authorName: req.user.name,
       authorPic: req.user.profile_pic || '',
       body: body,
@@ -46,7 +51,10 @@ router.post('/:postId', protect, memberOrAdmin, async (req, res) => {
     post.comments.push(comment);
     await post.save();
     
-    res.status(201).json(comment);
+    res.status(201).json({
+      ...comment,
+      author_name: req.user.name
+    });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
