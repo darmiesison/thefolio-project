@@ -196,7 +196,7 @@ function CatPage() {
                 <img src={post.author_pic || "/assets/logo-cat.png"} alt={post.author_name} className="author-avatar" />
                 <div>
                   <strong>{post.author_name}</strong>
-                  <span>{new Date(post.created_at).toLocaleString()}</span>
+                  <span>{post.createdAt ? new Date(post.createdAt).toLocaleString() : 'Just now'}</span>
                 </div>
               </div>
               <div className="post-header-buttons">
@@ -233,9 +233,9 @@ function CatPage() {
                 <p className="no-comments">No comments yet. Be the first!</p>
               ) : (
                 post.comments.map((comment) => (
-                  <div key={comment.id} className="comment-item">
-                    <strong>{comment.author_name}</strong>
-                    <p>{comment.content}</p>
+                  <div key={comment.commentId} className="comment-item">
+                    <strong>{comment.author_name || comment.authorName}</strong>
+                    <p>{comment.body}</p>
                   </div>
                 ))
               )}
