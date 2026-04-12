@@ -14,10 +14,11 @@ router.get('/:postId', async (req, res) => {
     
     const comments = await Promise.all(post.comments.map(async (comment) => {
       const author = await User.findById(comment.authorId).select('name profile_pic');
+      const commentObj = comment.toObject ? comment.toObject() : comment;
       return {
-        ...comment,
+        ...commentObj,
         author_name: author?.name || 'Unknown',
-        author_pic: author?.profile_pic || ''
+        author_pic: author?.profile_pic ? `https://${req.get('host')}/uploads/${author.profile_pic}` : ''
       };
     }));
     
@@ -69,7 +70,12 @@ router.delete('/:postId/:commentId', protect, memberOrAdmin, async (req, res) =>
     const comment = post.comments.find(c => c.commentId === req.params.commentId);
     if (!comment) return res.status(404).json({ message: 'Comment not found' });
     
-    if (comment.authorId !== req.user.id && req.user.role !== 'admin')
+    // Ensure userId is a string for comparison
+    const userId = req.user.id && typeof req.user.id === 'object' && req.user.id.toString 
+      ? req.user.id.toString() 
+      : String(req.user.id);
+    
+    if (comment.authorId !== userId && req.user.role !== 'admin')
       return res.status(403).json({ message: 'Not authorized' });
     
     post.comments = post.comments.filter(c => c.commentId !== req.params.commentId);
