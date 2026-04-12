@@ -200,7 +200,7 @@ function CatPage() {
                 </div>
               </div>
               <div className="post-header-buttons">
-                {post.user_id === user.id && (
+                {post.authorId === user.id && (
                   <>
                     <Link to={`/post/${post.id}`} className="edit-post-button">
                       Edit

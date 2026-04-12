@@ -127,11 +127,11 @@ function PostDetailPage() {
             <img src={post.author_pic || "/assets/logo-cat.png"} alt={post.author_name} className="author-avatar" />
             <div>
               <strong>{post.author_name}</strong>
-              <span>{new Date(post.created_at).toLocaleString()}</span>
+              <span>{post.createdAt ? new Date(post.createdAt).toLocaleString() : 'Just now'}</span>
             </div>
           </div>
           <div className="post-header-buttons">
-            {post.user_id === user.id && (
+            {post.authorId === user.id && (
               <>
                 <button type="button" className="edit-post-button" onClick={handleEditToggle}>
                   {editMode ? "Cancel" : "Edit"}
@@ -187,12 +187,12 @@ function PostDetailPage() {
           <div className="comments-section">
             <h4>Comments</h4>
             {comments.map((comment) => (
-              <div key={comment.id} className="comment">
-                <img src={comment.author_pic || "/assets/logo-cat.png"} alt={comment.author_name} className="comment-avatar" />
+              <div key={comment.commentId} className="comment">
+                <img src={comment.author_pic || "/assets/logo-cat.png"} alt={comment.author_name || comment.authorName} className="comment-avatar" />
                 <div>
-                  <strong>{comment.author_name}</strong>
+                  <strong>{comment.author_name || comment.authorName}</strong>
                   <p>{comment.body}</p>
-                  <span>{new Date(comment.created_at).toLocaleString()}</span>
+                  <span>{comment.createdAt ? new Date(comment.createdAt).toLocaleString() : 'Just now'}</span>
                 </div>
               </div>
             ))}
