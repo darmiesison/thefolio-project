@@ -41,6 +41,12 @@
     color 0.3s ease;
 }
 
+.page-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
 /* Toggle Button Styling */
 .theme-toggle {
   background: var(--primary);

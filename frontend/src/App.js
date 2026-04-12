@@ -39,59 +39,59 @@ function App() {
         <Route
           path="/home"
           element={
-            <>
+            <div className="page-wrapper">
               <Nav toggleTheme={toggleTheme} currentTheme={theme} />
               <div className="container">
                 <HomePage />
               </div>
               <footer><p>© 2026 All About Cats</p></footer>
-            </>
+            </div>
           }
         />
 
         <Route
           path="/about"
           element={
-            <>
+            <div className="page-wrapper">
               <Nav toggleTheme={toggleTheme} currentTheme={theme} />
               <div className="container">
                 <AboutPage />
               </div>
               <footer><p>© 2026 All About Cats</p></footer>
-            </>
+            </div>
           }
         />
 
         <Route
           path="/contact"
           element={
-            <>
+            <div className="page-wrapper">
               <Nav toggleTheme={toggleTheme} currentTheme={theme} />
               <div className="container">
                 <ContactPage />
               </div>
               <footer><p>© 2026 All About Cats</p></footer>
-            </>
+            </div>
           }
         />
 
         <Route
           path="/register"
           element={
-            <>
+            <div className="page-wrapper">
               <Nav toggleTheme={toggleTheme} currentTheme={theme} />
               <div className="container">
                 <RegisterPage />
               </div>
               <footer><p>© 2026 All About Cats</p></footer>
-            </>
+            </div>
           }
         />
 
         <Route
           path="/cat"
           element={
-            <>
+            <div className="page-wrapper">
               <Nav toggleTheme={toggleTheme} currentTheme={theme} />
               <div className="container">
                 <ProtectedRoute>
@@ -99,14 +99,14 @@ function App() {
                 </ProtectedRoute>
               </div>
               <footer><p>© 2026 All About Cats</p></footer>
-            </>
+            </div>
           }
         />
 
         <Route
           path="/my-posts"
           element={
-            <>
+            <div className="page-wrapper">
               <Nav toggleTheme={toggleTheme} currentTheme={theme} />
               <div className="container">
                 <ProtectedRoute>
@@ -114,14 +114,14 @@ function App() {
                 </ProtectedRoute>
               </div>
               <footer><p>© 2026 All About Cats</p></footer>
-            </>
+            </div>
           }
         />
 
         <Route
           path="/admin"
           element={
-            <>
+            <div className="page-wrapper">
               <Nav toggleTheme={toggleTheme} currentTheme={theme} />
               <div className="container">
                 <ProtectedRoute role="admin">
@@ -129,14 +129,14 @@ function App() {
                 </ProtectedRoute>
               </div>
               <footer><p>© 2026 All About Cats</p></footer>
-            </>
+            </div>
           }
         />
 
         <Route
           path="/profile"
           element={
-            <>
+            <div className="page-wrapper">
               <Nav toggleTheme={toggleTheme} currentTheme={theme} />
               <div className="container">
                 <ProtectedRoute>
@@ -144,14 +144,14 @@ function App() {
                 </ProtectedRoute>
               </div>
               <footer><p>© 2026 All About Cats</p></footer>
-            </>
+            </div>
           }
         />
 
         <Route
           path="/post/:id"
           element={
-            <>
+            <div className="page-wrapper">
               <Nav toggleTheme={toggleTheme} currentTheme={theme} />
               <div className="container">
                 <ProtectedRoute>
@@ -159,33 +159,33 @@ function App() {
                 </ProtectedRoute>
               </div>
               <footer><p>© 2026 All About Cats</p></footer>
-            </>
+            </div>
           }
         />
 
         <Route
           path="/login"
           element={
-            <>
+            <div className="page-wrapper">
               <Nav toggleTheme={toggleTheme} currentTheme={theme} />
               <div className="container">
                 <LoginPage />
               </div>
               <footer><p>© 2026 All About Cats</p></footer>
-            </>
+            </div>
           }
         />
 
         <Route
           path="/forgot-password"
           element={
-            <>
+            <div className="page-wrapper">
               <Nav toggleTheme={toggleTheme} currentTheme={theme} />
               <div className="container">
                 <ForgotPasswordPage />
               </div>
               <footer><p>© 2026 All About Cats</p></footer>
-            </>
+            </div>
           }
         />
       </Routes>
