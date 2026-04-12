@@ -13,7 +13,12 @@ router.use(protect, adminOnly);
 router.get('/users', async (req, res) => {
   try {
     const users = await User.find({ role: { $ne: 'admin' } }).select('-password').sort({ createdAt: -1 });
-    res.json(users);
+    const formattedUsers = users.map(user => ({
+      ...user.toObject(),
+      id: user._id.toString(),
+      createdAt: user.createdAt ? new Date(user.createdAt).toISOString() : new Date().toISOString()
+    }));
+    res.json(formattedUsers);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -67,7 +72,12 @@ router.delete('/users/:id', async (req, res) => {
 router.get('/contact-messages', async (req, res) => {
   try {
     const messages = await ContactMessage.find().sort({ createdAt: -1 });
-    res.json(messages);
+    const formattedMessages = messages.map(msg => ({
+      ...msg.toObject(),
+      id: msg._id.toString(),
+      createdAt: msg.createdAt ? new Date(msg.createdAt).toISOString() : new Date().toISOString()
+    }));
+    res.json(formattedMessages);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
