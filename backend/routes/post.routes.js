@@ -100,9 +100,8 @@ router.get('/:id', protect, async (req, res) => {
 router.post('/', protect, memberOrAdmin, upload.single('image'), async (req, res) => {
   try {
     const { content } = req.body;
-    // On Vercel, images are not supported (no persistent /uploads/ folder)
-    // Files uploaded are silently ignored
-    const image = '';
+    // Save the image filename if a file was uploaded
+    const image = req.file ? req.file.filename : '';
     
     // Ensure authorId is a string
     const authorId = req.user.id && typeof req.user.id === 'object' && req.user.id.toString 
@@ -155,6 +154,9 @@ router.put('/:id', protect, memberOrAdmin, upload.single('image'), async (req, r
       return res.status(403).json({ message: 'Not authorized' });
     
     post.content = content || post.content;
+    if (req.file) {
+      post.image = req.file.filename;
+    }
     await post.save();
     
     const postObj = post.toObject();
