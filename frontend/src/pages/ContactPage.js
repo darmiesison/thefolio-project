@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import API from "../api/axios";
+import InteractiveMap from "../components/InteractiveMap";
 
 function ContactPage() {
   const [formData, setFormData] = useState({
@@ -95,14 +96,10 @@ function ContactPage() {
           </div>
         </div>
       </section>
-      {/* Map Place Holder */}
+      {/* Interactive Map */}
       <section className="map-section">
         <h2>Map Location</h2>
-        <img
-          src="/assets/map-placeholder.png"
-          alt="Map Location"
-          className="map-image"
-        />
+        <InteractiveMap />
       </section>
 
       <section className="shelter-section">
