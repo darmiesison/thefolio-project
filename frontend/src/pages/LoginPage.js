@@ -52,13 +52,13 @@ function LoginPage() {
           onChange={(e) => setPassword(e.target.value)} 
           required 
         />
+        <p style={{marginTop: '8px', marginBottom: '20px'}}>
+          <Link to="/forgot-password">Forgot your password?</Link>
+        </p>
 
         <button type="submit">Login</button>
         <p style={{marginTop: '10px'}}>
           Don't have an account? <Link to="/register">Register here</Link>
-        </p>
-        <p>
-          Forgot your password? <Link to="/forgot-password">Reset it here</Link>
         </p>
       </form>
     </main>
