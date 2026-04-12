@@ -90,7 +90,20 @@ router.delete('/contact-messages/:id', async (req, res) => {
 router.get('/posts', async (req, res) => {
   try {
     const posts = await CatPost.find().sort({ createdAt: -1 });
-    res.json(posts);
+    const enrichedPosts = await Promise.all(posts.map(async (post) => {
+      const author = await User.findById(post.authorId).select('name profile_pic');
+      const postObj = post.toObject();
+      return {
+        ...postObj,
+        id: post._id.toString(),
+        author_name: author?.name || 'Unknown',
+        author_pic: author?.profile_pic || '',
+        image_url: post.image || '',
+        created_at: post.createdAt,
+        status: 'published'
+      };
+    }));
+    res.json(enrichedPosts);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
