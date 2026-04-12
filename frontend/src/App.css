@@ -47,6 +47,10 @@
   min-height: 100vh;
 }
 
+.container {
+  flex: 1;
+}
+
 /* Toggle Button Styling */
 .theme-toggle {
   background: var(--primary);
