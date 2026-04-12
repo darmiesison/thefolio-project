@@ -131,7 +131,7 @@ function PostDetailPage() {
             </div>
           </div>
           <div className="post-header-buttons">
-            {post.authorId === user.id && (
+            {user && post.authorId && String(post.authorId) === String(user.id) && (
               <>
                 <button type="button" className="edit-post-button" onClick={handleEditToggle}>
                   {editMode ? "Cancel" : "Edit"}
