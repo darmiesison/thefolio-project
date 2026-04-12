@@ -200,14 +200,19 @@ function CatPage() {
                 </div>
               </div>
               <div className="post-header-buttons">
-                {user && post.authorId && String(post.authorId) === String(user.id) && (
+                {user && post.authorId && (
                   <>
-                    <Link to={`/post/${post.id}`} className="edit-post-button">
-                      Edit
-                    </Link>
-                    <button type="button" className="delete-post-button" onClick={() => deletePost(post.id)}>
-                      Delete
-                    </button>
+                    {console.log(`Post authorId: ${post.authorId}, User id: ${user.id}, Match: ${String(post.authorId) === String(user.id)}`)}
+                    {String(post.authorId) === String(user.id) && (
+                      <>
+                        <Link to={`/post/${post.id}`} className="edit-post-button">
+                          Edit
+                        </Link>
+                        <button type="button" className="delete-post-button" onClick={() => deletePost(post.id)}>
+                          Delete
+                        </button>
+                      </>
+                    )}
                   </>
                 )}
               </div>
