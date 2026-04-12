@@ -128,7 +128,7 @@ const AdminPage = () => {
                       <td>{user.email}</td>
                       <td>{user.role}</td>
                       <td>{user.status}</td>
-                      <td>{new Date(user.createdAt || user.created_at).toLocaleDateString()}</td>
+                      <td>{new Date(user.createdAt).toLocaleDateString()}</td>
                       <td>
                         <button
                           type="button"
@@ -175,7 +175,7 @@ const AdminPage = () => {
                     <tr key={post.id}>
                       <td>{post.title || post.content?.slice(0, 30) || 'Untitled'}</td>
                       <td>{post.author_name}</td>
-                      <td>{new Date(post.created_at || post.createdAt).toLocaleDateString()}</td>
+                      <td>{new Date(post.createdAt).toLocaleDateString()}</td>
                       <td>
                         {post.image_url ? (
                           <img
@@ -220,7 +220,7 @@ const AdminPage = () => {
                         </div>
                       </div>
                       <div>
-                        <span>{new Date(msg.createdAt || msg.created_at).toLocaleString()}</span>
+                        <span>{new Date(msg.createdAt).toLocaleString()}</span>
                         <button
                           type="button"
                           onClick={() => deleteMessage(msg.id)}
