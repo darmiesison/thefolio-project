@@ -59,13 +59,17 @@ router.get('/:id', protect, async (req, res) => {
 });
 
 // POST /api/posts
-router.post('/', protect, memberOrAdmin, upload.single('image'), async (req, res) => {
+// Note: upload.single('image') is skipped on Vercel (no persistent storage)
+// To use image uploads on Vercel, integrate cloud storage (S3, Cloudinary, etc.)
+router.post('/', protect, memberOrAdmin, async (req, res) => {
   try {
     const { content } = req.body;
-    const image = req.file ? req.file.filename : '';
+    // On Vercel, images are not supported (no persistent /uploads/ folder)
+    // Images would need cloud storage integration
+    const image = '';
     
     const post = await CatPost.create({
-      authorId: req.user.id,
+      authorId: req.user.id.toString(),
       authorName: req.user.name,
       authorPic: req.user.profile_pic || '',
       content: content || '',

@@ -1,24 +1,37 @@
 // backend/seedAdmin.js
 require('dotenv').config();
-const { Pool } = require('pg');
+const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const User = require('./models/User');
 
 async function seed() {
   try {
-    const exists = await pool.query("SELECT id FROM users WHERE email = 'admin@thefolio.com' OR LOWER(name) = LOWER('admin')");
-    if (exists.rows.length > 0) {
+    // Connect to MongoDB
+    await mongoose.connect(process.env.MONGO_URI);
+
+    // Check if admin already exists
+    const exists = await User.findOne({
+      $or: [{ email: 'admin@thefolio.com' }, { name: 'admin' }]
+    });
+
+    if (exists) {
       console.log('Admin already exists.');
       process.exit();
     }
 
-    // Must hash manually — no Mongoose pre-save hook!
+    // Hash password manually
     const hashed = await bcrypt.hash('admin', 12);
-    await pool.query(
-      'INSERT INTO users (name, email, password, role, status) VALUES ($1, $2, $3, $4, $5)',
-      ['admin', 'admin@thefolio.com', hashed, 'admin', 'active']
-    );
+    
+    // Create admin user
+    const admin = new User({
+      name: 'admin',
+      email: 'admin@thefolio.com',
+      password: hashed,
+      role: 'admin',
+      status: 'active'
+    });
+
+    await admin.save();
     console.log('Admin created! Username: admin / Email: admin@thefolio.com / Password: admin');
     process.exit();
   } catch (err) {
