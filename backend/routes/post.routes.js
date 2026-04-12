@@ -68,8 +68,13 @@ router.post('/', protect, memberOrAdmin, upload.single('image'), async (req, res
     // Files uploaded are silently ignored
     const image = '';
     
+    // Ensure authorId is a string
+    const authorId = req.user.id && typeof req.user.id === 'object' && req.user.id.toString 
+      ? req.user.id.toString() 
+      : String(req.user.id);
+    
     const post = await CatPost.create({
-      authorId: req.user.id.toString(),
+      authorId: authorId,
       authorName: req.user.name,
       authorPic: req.user.profile_pic || '',
       content: content || '',

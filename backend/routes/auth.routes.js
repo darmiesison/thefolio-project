@@ -9,7 +9,11 @@ const upload = require('../middleware/upload');
 
 const router = express.Router();
 
-const generateToken = (id) => jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+const generateToken = (id) => {
+  // Ensure id is a string
+  const idString = id && typeof id === 'object' && id.toString ? id.toString() : String(id);
+  return jwt.sign({ id: idString }, process.env.JWT_SECRET, { expiresIn: '7d' });
+};
 
 // POST /api/auth/register
 router.post('/register', async (req, res) => {
