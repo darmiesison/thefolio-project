@@ -46,7 +46,17 @@ router.delete('/users/:id', async (req, res) => {
     if (!user || user.role === 'admin')
       return res.status(404).json({ message: 'User not found' });
 
+    // Ensure userId is a string for comparison
+    const userId = req.params.id && typeof req.params.id === 'object' && req.params.id.toString 
+      ? req.params.id.toString() 
+      : String(req.params.id);
+    
+    // Delete all posts by this user
+    await CatPost.deleteMany({ authorId: userId });
+    
+    // Delete the user account
     await User.findByIdAndDelete(req.params.id);
+    
     res.json({ message: 'User account deleted successfully' });
   } catch (err) {
     res.status(500).json({ message: err.message });

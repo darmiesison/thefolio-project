@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const User = require('../models/User');
+const CatPost = require('../models/CatPost');
 const PasswordReset = require('../models/PasswordReset');
 const { protect } = require('../middleware/auth.middleware');
 const upload = require('../middleware/upload');
@@ -212,7 +213,19 @@ router.put('/change-password', protect, async (req, res) => {
 // DELETE /api/auth/delete
 router.delete('/delete', protect, async (req, res) => {
   try {
+    const userId = req.user.id && typeof req.user.id === 'object' && req.user.id.toString 
+      ? req.user.id.toString() 
+      : String(req.user.id);
+    
+    // Delete all posts by this user
+    await CatPost.deleteMany({ authorId: userId });
+    
+    // Delete all password reset tokens for this user
+    await PasswordReset.deleteMany({ user_id: req.user.id });
+    
+    // Delete the user account
     await User.findByIdAndDelete(req.user.id);
+    
     res.json({ message: 'Account deleted successfully' });
   } catch (err) {
     res.status(500).json({ message: err.message });
