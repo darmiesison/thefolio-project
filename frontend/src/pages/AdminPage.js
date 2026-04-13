@@ -182,7 +182,10 @@ const AdminPage = () => {
                             src={getImageUrl(post.image_url)}
                             alt="Post"
                             className="admin-post-thumbnail"
-                            onClick={() => setZoomedImage(getImageUrl(post.image_url))}
+                            onClick={() => {
+                              console.log('Image clicked:', post.image_url);
+                              setZoomedImage(getImageUrl(post.image_url));
+                            }}
                             style={{ cursor: 'pointer' }}
                           />
                         ) : (
@@ -246,8 +249,19 @@ const AdminPage = () => {
       {zoomedImage && (
         <div className="image-zoom-modal" onClick={() => setZoomedImage(null)}>
           <div className="image-zoom-container" onClick={(e) => e.stopPropagation()}>
-            <button className="close-zoom-button" onClick={() => setZoomedImage(null)}>×</button>
-            <img src={zoomedImage} alt="Zoomed" className="zoomed-image" />
+            <button 
+              className="close-zoom-button" 
+              onClick={() => setZoomedImage(null)}
+              type="button"
+            >
+              ×
+            </button>
+            <img 
+              src={zoomedImage} 
+              alt="Zoomed" 
+              className="zoomed-image"
+              onError={() => console.error('Failed to load image:', zoomedImage)}
+            />
           </div>
         </div>
       )}
