@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate, useLocation, Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import API from "../api/axios";
 import { useAuth } from "../context/AuthContext";
 
@@ -9,9 +9,6 @@ function LoginPage() {
   const [error, setError] = useState("");
   const { login } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
-
-  const returnTo = location.state?.from?.pathname || "/home";
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -21,14 +18,12 @@ function LoginPage() {
       // Save user data and token to global state
       login(response.data.user, response.data.token);
       
-      // Use a small timeout to ensure state is updated before navigation
-      setTimeout(() => {
-        if (response.data.user.role === 'admin') {
-          navigate('/admin', { replace: true });
-        } else {
-          navigate(returnTo, { replace: true });
-        }
-      }, 100);
+      // Always redirect to /home for members, /admin for admins
+      if (response.data.user.role === 'admin') {
+        navigate('/admin', { replace: true });
+      } else {
+        navigate('/home', { replace: true });
+      }
     } catch (err) {
       setError(err.response?.data?.message || "Invalid email or password");
     }
