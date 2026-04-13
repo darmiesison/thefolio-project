@@ -53,7 +53,7 @@ function LoginPage() {
           required 
         />
         <p style={{marginTop: '8px', marginBottom: '20px'}}>
-          <Link to="/forgot-password">Forgot your password?</Link>
+          Forgot your password? <Link to="/forgot-password">reset here</Link>
         </p>
 
         <button type="submit">Login</button>
