@@ -8,6 +8,8 @@ function RegisterPage() {
     email: "",
     password: "",
     confirmPassword: "",
+    gender: "",
+    interestLevel: "",
   });
 
   const [errors, setErrors] = useState({});
@@ -33,14 +35,16 @@ function RegisterPage() {
         const response = await API.post('/auth/register', {
           name: formData.username,
           email: formData.email,
-          password: formData.password
+          password: formData.password,
+          gender: formData.gender || null,
+          interestLevel: formData.interestLevel || null,
         });
 
         console.log("Server Response:", response.data); // Now 'response' is being read!
 
         setSuccess("🎉 Registration successful! You can now login.");
         setErrors({});
-        setFormData({ username: "", email: "", password: "", confirmPassword: "" });
+        setFormData({ username: "", email: "", password: "", confirmPassword: "", gender: "", interestLevel: "" });
         
       } catch (err) {
         setErrors({ server: err.response?.data?.message || "Registration failed" });
@@ -86,6 +90,28 @@ function RegisterPage() {
           onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
         />
         <div className="error">{errors.match}</div>
+
+        <label>Gender</label>
+        <select
+          value={formData.gender}
+          onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
+        >
+          <option value="">Select Gender (Optional)</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+          <option value="Other">Other</option>
+        </select>
+
+        <label>Interest Level</label>
+        <select
+          value={formData.interestLevel}
+          onChange={(e) => setFormData({ ...formData, interestLevel: e.target.value })}
+        >
+          <option value="">Select Interest Level (Optional)</option>
+          <option value="Beginner">Beginner</option>
+          <option value="Intermediate">Intermediate</option>
+          <option value="Expert">Expert</option>
+        </select>
 
         <button type="submit">Register</button>
         {success && <div className="success">{success}</div>}

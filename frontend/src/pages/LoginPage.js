@@ -25,7 +25,7 @@ function LoginPage() {
         navigate('/home', { replace: true });
       }
     } catch (err) {
-      setError(err.response?.data?.message || "Invalid email or password");
+      setError(err.response?.data?.message || "Account doesn't exist or invalid password");
     }
   };
 

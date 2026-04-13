@@ -12,6 +12,11 @@ const ProfilePage = () => {
     newPassword: '',
     confirmPassword: ''
   });
+  const [editForm, setEditForm] = useState({
+    gender: user?.gender || '',
+    interestLevel: user?.interestLevel || ''
+  });
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [stats, setStats] = useState({
     postsCount: 0,
     likesCount: 0,
@@ -45,6 +50,10 @@ const ProfilePage = () => {
   useEffect(() => {
     if (user) {
       refreshUser();
+      setEditForm({
+        gender: user?.gender || '',
+        interestLevel: user?.interestLevel || ''
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -79,6 +88,30 @@ const ProfilePage = () => {
       ...formData,
       [e.target.name]: e.target.value
     });
+  };
+
+  const handleEditChange = (e) => {
+    setEditForm({
+      ...editForm,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleSaveProfile = async () => {
+    try {
+      const updateData = new FormData();
+      if (editForm.gender) updateData.append('gender', editForm.gender);
+      if (editForm.interestLevel) updateData.append('interestLevel', editForm.interestLevel);
+
+      const response = await API.put('/auth/profile', updateData);
+      updateUser(response.data);
+      setStatusMessage('Profile updated successfully!');
+      setIsEditingProfile(false);
+      setTimeout(() => setStatusMessage(''), 3000);
+    } catch (err) {
+      console.error('Profile update error:', err);
+      setStatusMessage('Failed to update profile.');
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -181,6 +214,51 @@ const ProfilePage = () => {
         <p><strong>Name:</strong> {user?.name}</p>
         <p><strong>Email:</strong> {user?.email}</p>
         <p><strong>Role:</strong> {user?.role}</p>
+        
+        {!isEditingProfile ? (
+          <>
+            {user?.gender && <p><strong>Gender:</strong> {user?.gender}</p>}
+            {user?.interestLevel && <p><strong>Interest Level:</strong> {user?.interestLevel}</p>}
+            <button className="btn-edit-profile" onClick={() => setIsEditingProfile(true)}>
+              Edit Profile Info
+            </button>
+          </>
+        ) : (
+          <div className="edit-profile-form">
+            <div className="form-group">
+              <label htmlFor="gender">Gender:</label>
+              <select
+                id="gender"
+                name="gender"
+                value={editForm.gender}
+                onChange={handleEditChange}
+              >
+                <option value="">Not specified</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="interestLevel">Interest Level:</label>
+              <select
+                id="interestLevel"
+                name="interestLevel"
+                value={editForm.interestLevel}
+                onChange={handleEditChange}
+              >
+                <option value="">Not specified</option>
+                <option value="Beginner">Beginner</option>
+                <option value="Intermediate">Intermediate</option>
+                <option value="Expert">Expert</option>
+              </select>
+            </div>
+
+            <button className="btn-save" onClick={handleSaveProfile}>Save Changes</button>
+            <button className="btn-cancel" onClick={() => setIsEditingProfile(false)}>Cancel</button>
+          </div>
+        )}
       </div>
 
       {showPasswordForm && (

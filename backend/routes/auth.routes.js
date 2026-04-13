@@ -25,7 +25,7 @@ const buildImageUrl = (req, image) => {
 
 // POST /api/auth/register
 router.post('/register', async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, gender, interestLevel } = req.body;
   try {
     const emailExists = await User.findOne({ email: { $regex: email, $options: 'i' } });
     if (emailExists)
@@ -36,11 +36,24 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ message: 'Name is already taken' });
 
     const hashedPassword = await bcrypt.hash(password, 12);
-    const user = await User.create({ name, email, password: hashedPassword });
+    const user = await User.create({ 
+      name, 
+      email, 
+      password: hashedPassword,
+      gender: gender || null,
+      interestLevel: interestLevel || null,
+    });
 
     res.status(201).json({
       token: generateToken(user._id.toString()),
-      user: { id: user._id.toString(), name: user.name, email: user.email, role: user.role }
+      user: { 
+        id: user._id.toString(), 
+        name: user.name, 
+        email: user.email, 
+        role: user.role,
+        gender: user.gender,
+        interestLevel: user.interestLevel,
+      }
     });
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -92,6 +105,8 @@ router.get('/me', protect, async (req, res) => {
     const userData = user.toObject();
     userData.id = user._id.toString();
     userData.profile_pic = buildImageUrl(req, userData.profile_pic);
+    userData.gender = user.gender || null;
+    userData.interestLevel = user.interestLevel || null;
     res.json(userData);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -101,7 +116,7 @@ router.get('/me', protect, async (req, res) => {
 // PUT /api/auth/profile
 router.put('/profile', protect, upload.single('profilePic'), async (req, res) => {
   try {
-    const { name, bio } = req.body;
+    const { name, bio, gender, interestLevel } = req.body;
     const profilePic = req.file ? req.file.filename : null;
 
     if (name) {
@@ -117,6 +132,8 @@ router.put('/profile', protect, upload.single('profilePic'), async (req, res) =>
     if (name) updateData.name = name;
     if (bio !== undefined) updateData.bio = bio;
     if (profilePic) updateData.profile_pic = profilePic;
+    if (gender !== undefined) updateData.gender = gender || null;
+    if (interestLevel !== undefined) updateData.interestLevel = interestLevel || null;
 
     const user = await User.findByIdAndUpdate(
       req.user.id,
@@ -127,6 +144,8 @@ router.put('/profile', protect, upload.single('profilePic'), async (req, res) =>
     const userData = user.toObject();
     userData.id = user._id.toString();
     userData.profile_pic = buildImageUrl(req, userData.profile_pic);
+    userData.gender = user.gender || null;
+    userData.interestLevel = user.interestLevel || null;
 
     res.json(userData);
   } catch (err) {

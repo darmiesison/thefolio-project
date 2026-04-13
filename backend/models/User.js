@@ -38,6 +38,16 @@ const UserSchema = new mongoose.Schema(
       type: String,
       default: '',
     },
+    gender: {
+      type: String,
+      enum: ['Male', 'Female', 'Other'],
+      default: null,
+    },
+    interestLevel: {
+      type: String,
+      enum: ['Beginner', 'Intermediate', 'Expert'],
+      default: null,
+    },
   },
   { timestamps: true }
 );

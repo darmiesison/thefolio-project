@@ -69,7 +69,7 @@ function HomePage() {
       {/* Feed Page Button */}
       <div className="home-feed-button">
         <button onClick={() => navigate('/cat')} className="feed-page-btn">
-          Feed Page
+          View Feed
         </button>
       </div>
 
