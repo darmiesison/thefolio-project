@@ -7,6 +7,7 @@ const AdminPage = () => {
   const [messages, setMessages] = useState([]);
   const [statusMessage, setStatusMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [zoomedImage, setZoomedImage] = useState(null);
 
   const fetchUsers = async () => {
     try {
@@ -182,6 +183,8 @@ const AdminPage = () => {
                             src={getImageUrl(post.image_url)}
                             alt="Post"
                             className="admin-post-thumbnail"
+                            onClick={() => setZoomedImage(getImageUrl(post.image_url))}
+                            style={{ cursor: 'pointer' }}
                           />
                         ) : (
                           'No'
@@ -238,6 +241,16 @@ const AdminPage = () => {
             )}
           </section>
         </>
+      )}
+
+      {/* Image Zoom Modal */}
+      {zoomedImage && (
+        <div className="image-zoom-modal" onClick={() => setZoomedImage(null)}>
+          <div className="image-zoom-container" onClick={(e) => e.stopPropagation()}>
+            <button className="close-zoom-button" onClick={() => setZoomedImage(null)}>×</button>
+            <img src={zoomedImage} alt="Zoomed" className="zoomed-image" />
+          </div>
+        </div>
       )}
     </div>
   );
