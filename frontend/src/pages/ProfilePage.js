@@ -32,17 +32,28 @@ const ProfilePage = () => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const uploadFormData = new FormData();
-    uploadFormData.append('profilePic', file);
-
     try {
-      const response = await API.put('/auth/profile', uploadFormData);
-      updateUser(response.data);
-      setStatusMessage('Profile picture updated successfully!');
-      setTimeout(() => setStatusMessage(''), 3000);
+      // Convert image to base64
+      const reader = new FileReader();
+      reader.onload = async (event) => {
+        const base64String = event.target.result;
+        
+        try {
+          const response = await API.put('/auth/profile', {
+            profile_pic: base64String
+          });
+          updateUser(response.data);
+          setStatusMessage('Profile picture updated successfully!');
+          setTimeout(() => setStatusMessage(''), 3000);
+        } catch (err) {
+          console.error('Profile update error:', err);
+          setStatusMessage('Failed to update profile picture.');
+        }
+      };
+      reader.readAsDataURL(file);
     } catch (err) {
-      console.error('Profile update error:', err);
-      setStatusMessage('Failed to update profile picture.');
+      console.error('File read error:', err);
+      setStatusMessage('Failed to read file.');
     }
   };
 

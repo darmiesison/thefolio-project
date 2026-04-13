@@ -10,6 +10,7 @@ const router = express.Router();
 const buildImageUrl = (req, image) => {
   if (!image) return '';
   if (image.startsWith('http')) return image;
+  if (image.startsWith('data:')) return image; // Base64 image, return as-is
   
   // For Render, always use HTTPS. Check X-Forwarded-Proto header for reverse proxy
   const protocol = req.get('X-Forwarded-Proto') || req.protocol || 'https';

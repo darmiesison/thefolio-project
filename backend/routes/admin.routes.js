@@ -7,6 +7,15 @@ const { adminOnly } = require('../middleware/role.middleware');
 
 const router = express.Router();
 
+const buildImageUrl = (req, image) => {
+  if (!image) return '';
+  if (image.startsWith('http')) return image;
+  if (image.startsWith('data:')) return image; // Base64 image, return as-is
+  
+  const host = req.get('host');
+  return `https://${host}/uploads/${image}`;
+};
+
 router.use(protect, adminOnly);
 
 // GET /api/admin/users
@@ -107,8 +116,8 @@ router.get('/posts', async (req, res) => {
         ...postObj,
         id: post._id.toString(),
         author_name: author?.name || 'Unknown',
-        author_pic: author?.profile_pic || '',
-        image_url: post.image || '',
+        author_pic: buildImageUrl(req, author?.profile_pic) || '',
+        image_url: buildImageUrl(req, post.image) || '',
         created_at: post.createdAt,
         status: 'published'
       };

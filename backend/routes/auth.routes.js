@@ -88,7 +88,7 @@ router.post('/login', async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
-        profile_pic: buildImageUrl(req, user.profile_pic),
+        profile_pic: user.profile_pic && user.profile_pic.startsWith('data:') ? user.profile_pic : buildImageUrl(req, user.profile_pic),
       },
     });
   } catch (err) {
@@ -104,7 +104,7 @@ router.get('/me', protect, async (req, res) => {
     
     const userData = user.toObject();
     userData.id = user._id.toString();
-    userData.profile_pic = buildImageUrl(req, userData.profile_pic);
+    userData.profile_pic = userData.profile_pic && userData.profile_pic.startsWith('data:') ? userData.profile_pic : buildImageUrl(req, userData.profile_pic);
     userData.gender = user.gender || null;
     userData.interestLevel = user.interestLevel || null;
     res.json(userData);
@@ -116,8 +116,17 @@ router.get('/me', protect, async (req, res) => {
 // PUT /api/auth/profile
 router.put('/profile', protect, upload.single('profilePic'), async (req, res) => {
   try {
-    const { name, bio, gender, interestLevel } = req.body;
-    const profilePic = req.file ? req.file.filename : null;
+    const { name, bio, gender, interestLevel, profile_pic } = req.body;
+    
+    // Handle both file upload and base64 image
+    let profilePicToSave = null;
+    if (profile_pic) {
+      // Base64 image from frontend
+      profilePicToSave = profile_pic;
+    } else if (req.file) {
+      // File upload from frontend
+      profilePicToSave = req.file.filename;
+    }
 
     if (name) {
       const nameExists = await User.findOne({
@@ -131,7 +140,7 @@ router.put('/profile', protect, upload.single('profilePic'), async (req, res) =>
     const updateData = {};
     if (name) updateData.name = name;
     if (bio !== undefined) updateData.bio = bio;
-    if (profilePic) updateData.profile_pic = profilePic;
+    if (profilePicToSave) updateData.profile_pic = profilePicToSave;
     if (gender !== undefined) updateData.gender = gender || null;
     if (interestLevel !== undefined) updateData.interestLevel = interestLevel || null;
 
@@ -143,7 +152,10 @@ router.put('/profile', protect, upload.single('profilePic'), async (req, res) =>
 
     const userData = user.toObject();
     userData.id = user._id.toString();
-    userData.profile_pic = buildImageUrl(req, userData.profile_pic);
+    // If profile_pic is a base64 string, return it directly; otherwise build URL
+    userData.profile_pic = userData.profile_pic && userData.profile_pic.startsWith('data:') 
+      ? userData.profile_pic 
+      : buildImageUrl(req, userData.profile_pic);
     userData.gender = user.gender || null;
     userData.interestLevel = user.interestLevel || null;
 
