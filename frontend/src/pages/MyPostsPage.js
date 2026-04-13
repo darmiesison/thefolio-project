@@ -65,7 +65,7 @@ function MyPostsPage() {
           <div key={post.id} className="post-list-item card">
             <Link to={`/post/${post.id}`} className="post-link">
               <div className="post-preview">
-                <p className="post-date">{new Date(post.created_at).toLocaleString()}</p>
+                <p className="post-date">{post.createdAt ? new Date(post.createdAt).toLocaleString() : 'Just now'}</p>
                 <p className="post-content-preview">
                   {post.content.length > 100 ? `${post.content.substring(0, 100)}...` : post.content}
                 </p>
