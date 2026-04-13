@@ -40,9 +40,12 @@ const ProfilePage = () => {
     }
   };
 
-  // Fetch latest user data when component mounts
+  // Fetch latest user data when component mounts and user exists
   useEffect(() => {
-    refreshUser();
+    if (user) {
+      refreshUser();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
