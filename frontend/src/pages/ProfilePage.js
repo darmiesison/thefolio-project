@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import API from '../api/axios';
 
 const ProfilePage = () => {
-  const { user, updateUser } = useAuth();
+  const { user, updateUser, refreshUser } = useAuth();
   const navigate = useNavigate();
   const fileInputRef = React.useRef(null);
   const [formData, setFormData] = useState({
@@ -39,6 +39,11 @@ const ProfilePage = () => {
       setStatusMessage('Failed to update profile picture.');
     }
   };
+
+  // Fetch latest user data when component mounts
+  useEffect(() => {
+    refreshUser();
+  }, []);
 
   useEffect(() => {
     const fetchStats = async () => {
