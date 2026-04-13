@@ -45,7 +45,7 @@ function Nav({ toggleTheme, currentTheme }) {
                   to="/cat"
                   className={location.pathname === "/cat" ? "active" : ""}
                 >
-                  Cat Page
+                  Feed
                 </Link>
               </li>
               {user.role === 'admin' && (
