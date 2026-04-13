@@ -1254,7 +1254,8 @@ footer {
 }
 
 .btn-change,
-.btn-view-posts {
+.btn-view-posts,
+.btn-change-password {
   padding: 10px 24px;
   border: none;
   border-radius: 999px;
@@ -1279,6 +1280,15 @@ footer {
 }
 
 .btn-view-posts:hover {
+  background-color: var(--secondary);
+}
+
+.btn-change-password {
+  background-color: var(--primary);
+  color: white;
+}
+
+.btn-change-password:hover {
   background-color: var(--secondary);
 }
 

@@ -21,6 +21,7 @@ const ProfilePage = () => {
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
   const [statusMessage, setStatusMessage] = useState('');
+  const [showPasswordForm, setShowPasswordForm] = useState(false);
 
   const handleAvatarChange = async (e) => {
     const file = e.target.files?.[0];
@@ -111,6 +112,8 @@ const ProfilePage = () => {
         newPassword: '',
         confirmPassword: ''
       });
+      setShowPasswordForm(false);
+      setTimeout(() => setSuccess(''), 3000);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to change password');
     } finally {
@@ -149,6 +152,9 @@ const ProfilePage = () => {
             <div className="profile-buttons">
               <button className="btn-change" onClick={() => fileInputRef.current?.click()}>Update Profile</button>
               <button className="btn-view-posts" onClick={() => navigate('/my-posts')}>View My Posts</button>
+              <button className="btn-change-password" onClick={() => setShowPasswordForm(!showPasswordForm)}>
+                {showPasswordForm ? 'Cancel' : 'Change Password'}
+              </button>
             </div>
           </div>
         </div>
@@ -177,56 +183,58 @@ const ProfilePage = () => {
         <p><strong>Role:</strong> {user?.role}</p>
       </div>
 
-      <div className="change-password-section">
-        <h3>Change Password</h3>
+      {showPasswordForm && (
+        <div className="change-password-section">
+          <h3>Change Password</h3>
 
-        {error && <p className="error-msg">{error}</p>}
-        {success && <p className="success-msg">{success}</p>}
+          {error && <p className="error-msg">{error}</p>}
+          {success && <p className="success-msg">{success}</p>}
 
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label htmlFor="currentPassword">Current Password:</label>
-            <input
-              type="password"
-              id="currentPassword"
-              name="currentPassword"
-              value={formData.currentPassword}
-              onChange={handleChange}
-              required
-            />
-          </div>
+          <form onSubmit={handleSubmit}>
+            <div className="form-group">
+              <label htmlFor="currentPassword">Current Password:</label>
+              <input
+                type="password"
+                id="currentPassword"
+                name="currentPassword"
+                value={formData.currentPassword}
+                onChange={handleChange}
+                required
+              />
+            </div>
 
-          <div className="form-group">
-            <label htmlFor="newPassword">New Password:</label>
-            <input
-              type="password"
-              id="newPassword"
-              name="newPassword"
-              value={formData.newPassword}
-              onChange={handleChange}
-              required
-              minLength="6"
-            />
-          </div>
+            <div className="form-group">
+              <label htmlFor="newPassword">New Password:</label>
+              <input
+                type="password"
+                id="newPassword"
+                name="newPassword"
+                value={formData.newPassword}
+                onChange={handleChange}
+                required
+                minLength="6"
+              />
+            </div>
 
-          <div className="form-group">
-            <label htmlFor="confirmPassword">Confirm New Password:</label>
-            <input
-              type="password"
-              id="confirmPassword"
-              name="confirmPassword"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              required
-              minLength="6"
-            />
-          </div>
+            <div className="form-group">
+              <label htmlFor="confirmPassword">Confirm New Password:</label>
+              <input
+                type="password"
+                id="confirmPassword"
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                required
+                minLength="6"
+              />
+            </div>
 
-          <button type="submit" disabled={loading}>
-            {loading ? 'Changing Password...' : 'Change Password'}
-          </button>
-        </form>
-      </div>
+            <button type="submit" disabled={loading}>
+              {loading ? 'Changing Password...' : 'Change Password'}
+            </button>
+          </form>
+        </div>
+      )}
     </div>
   );
 };
