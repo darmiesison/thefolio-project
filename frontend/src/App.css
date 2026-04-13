@@ -1427,6 +1427,36 @@ footer {
   opacity: 0.8;
 }
 
+/* ===== Home Feed Button ===== */
+.home-feed-button {
+  display: flex;
+  justify-content: center;
+  margin: 40px 0 20px 0;
+  padding: 20px;
+}
+
+.feed-page-btn {
+  padding: 12px 48px;
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 999px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(184, 51, 106, 0.3);
+}
+
+.feed-page-btn:hover {
+  background-color: var(--secondary);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(184, 51, 106, 0.4);
+}
+
+.feed-page-btn:active {
+  transform: translateY(0);
+}
 
 /* ===== Media Queries ===== */
 @media (max-width: 768px) {

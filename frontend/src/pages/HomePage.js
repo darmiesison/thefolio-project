@@ -1,6 +1,8 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function HomePage() {
+  const navigate = useNavigate();
   return (
     <main>
 
@@ -62,6 +64,13 @@ function HomePage() {
                 </div>
             </div>
         </section>
+      </div>
+
+      {/* Feed Page Button */}
+      <div className="home-feed-button">
+        <button onClick={() => navigate('/cat')} className="feed-page-btn">
+          Feed Page
+        </button>
       </div>
 
     </main>
