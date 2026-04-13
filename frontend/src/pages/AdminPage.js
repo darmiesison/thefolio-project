@@ -256,11 +256,18 @@ const AdminPage = () => {
             >
               ×
             </button>
+            <div style={{ textAlign: 'center', marginBottom: '10px', fontSize: '12px', color: '#666' }}>
+              <p>Image URL: {zoomedImage}</p>
+            </div>
             <img 
               src={zoomedImage} 
               alt="Zoomed" 
               className="zoomed-image"
-              onError={() => console.error('Failed to load image:', zoomedImage)}
+              onLoad={() => console.log('Image loaded successfully')}
+              onError={(e) => {
+                console.error('Failed to load image:', zoomedImage);
+                console.error('Error:', e);
+              }}
             />
           </div>
         </div>
