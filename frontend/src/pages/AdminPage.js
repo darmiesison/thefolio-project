@@ -52,8 +52,12 @@ const AdminPage = () => {
 
   const getImageUrl = (image) => {
     if (!image) return null;
-    // image_url is already a full URL from the backend
-    return image;
+    // If it's already a full URL, return as-is
+    if (image.startsWith('http://') || image.startsWith('https://')) return image;
+    // Otherwise, construct the full URL from the filename
+    // Remove '/api' from the baseURL and append '/uploads/{filename}'
+    const baseUrl = API.defaults.baseURL.replace('/api', '');
+    return `${baseUrl}/uploads/${image}`;
   };
 
   const deletePost = async (id) => {
@@ -256,9 +260,6 @@ const AdminPage = () => {
             >
               ×
             </button>
-            <div style={{ textAlign: 'center', marginBottom: '10px', fontSize: '12px', color: '#666' }}>
-              <p>Image URL: {zoomedImage}</p>
-            </div>
             <img 
               src={zoomedImage} 
               alt="Zoomed" 
