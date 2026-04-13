@@ -28,7 +28,7 @@ router.get('/', protect, async (req, res) => {
       return {
         ...postObj,
         id: post._id.toString(),
-        authorId: post.authorId,
+        authorId: post.authorId.toString(),
         author_name: author?.name || 'Unknown',
         author_pic: author?.profile_pic ? buildImageUrl(req, author.profile_pic) : '',
         image_url: buildImageUrl(req, post.image),
@@ -58,7 +58,7 @@ router.get('/my-posts', protect, async (req, res) => {
       return {
         ...postObj,
         id: post._id.toString(),
-        authorId: post.authorId,
+        authorId: post.authorId.toString(),
         author_name: author?.name || 'Unknown',
         author_pic: author?.profile_pic ? buildImageUrl(req, author.profile_pic) : '',
         image_url: buildImageUrl(req, post.image),
@@ -84,7 +84,7 @@ router.get('/:id', protect, async (req, res) => {
     res.json({
       ...postObj,
       id: post._id.toString(),
-      authorId: post.authorId,
+      authorId: post.authorId.toString(),
       author_name: author?.name || 'Unknown',
       author_pic: author?.profile_pic ? buildImageUrl(req, author.profile_pic) : '',
       image_url: buildImageUrl(req, post.image),
@@ -166,6 +166,7 @@ router.put('/:id', protect, memberOrAdmin, upload.single('image'), async (req, r
     res.json({
       ...postObj,
       id: post._id.toString(),
+      authorId: post.authorId.toString(),
       author_name: req.user.name,
       author_pic: buildImageUrl(req, req.user.profile_pic || ''),
       image_url: buildImageUrl(req, post.image),

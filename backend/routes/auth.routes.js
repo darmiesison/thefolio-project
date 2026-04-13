@@ -40,7 +40,7 @@ router.post('/register', async (req, res) => {
 
     res.status(201).json({
       token: generateToken(user._id.toString()),
-      user: { id: user._id, name: user.name, email: user.email, role: user.role }
+      user: { id: user._id.toString(), name: user.name, email: user.email, role: user.role }
     });
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -71,7 +71,7 @@ router.post('/login', async (req, res) => {
     res.json({
       token: generateToken(user._id.toString()),
       user: {
-        id: user._id,
+        id: user._id.toString(),
         name: user.name,
         email: user.email,
         role: user.role,
@@ -90,6 +90,7 @@ router.get('/me', protect, async (req, res) => {
     if (!user) return res.status(404).json({ message: 'User not found' });
     
     const userData = user.toObject();
+    userData.id = user._id.toString();
     userData.profile_pic = buildImageUrl(req, userData.profile_pic);
     res.json(userData);
   } catch (err) {
@@ -124,6 +125,7 @@ router.put('/profile', protect, upload.single('profilePic'), async (req, res) =>
     ).select('-password');
 
     const userData = user.toObject();
+    userData.id = user._id.toString();
     userData.profile_pic = buildImageUrl(req, userData.profile_pic);
 
     res.json(userData);
