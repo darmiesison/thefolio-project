@@ -52,9 +52,8 @@ const AdminPage = () => {
 
   const getImageUrl = (image) => {
     if (!image) return null;
-    if (image.startsWith('http')) return image;
-    const baseUrl = API.defaults.baseURL.replace('/api', '');
-    return `${baseUrl}/uploads/${image}`;
+    // image_url is already a full URL from the backend
+    return image;
   };
 
   const deletePost = async (id) => {
