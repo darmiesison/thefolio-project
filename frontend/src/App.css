@@ -642,11 +642,12 @@ button:hover {
 }
 
 .author-avatar {
-  width: 50px;
-  height: 50px;
+  width: 45px;
+  height: 45px;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid var(--primary);
+  border: 2px solid var(--primary);
+  flex-shrink: 0;
 }
 
 .author-info strong {
