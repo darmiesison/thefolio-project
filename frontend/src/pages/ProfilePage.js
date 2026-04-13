@@ -139,7 +139,7 @@ const ProfilePage = () => {
               Welcome to your community feed. Share posts, photos, likes, and comments with other cat lovers.
             </p>
             <div className="profile-buttons">
-              <button className="btn-change" onClick={() => fileInputRef.current?.click()}>Change</button>
+              <button className="btn-change" onClick={() => fileInputRef.current?.click()}>Update Profile</button>
               <button className="btn-view-posts" onClick={() => navigate('/my-posts')}>View My Posts</button>
             </div>
           </div>
