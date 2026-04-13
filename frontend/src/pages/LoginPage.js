@@ -21,11 +21,14 @@ function LoginPage() {
       // Save user data and token to global state
       login(response.data.user, response.data.token);
       
-      if (response.data.user.role === 'admin') {
-        navigate('/admin', { replace: true });
-      } else {
-        navigate(returnTo, { replace: true });
-      }
+      // Use a small timeout to ensure state is updated before navigation
+      setTimeout(() => {
+        if (response.data.user.role === 'admin') {
+          navigate('/admin', { replace: true });
+        } else {
+          navigate(returnTo, { replace: true });
+        }
+      }, 100);
     } catch (err) {
       setError(err.response?.data?.message || "Invalid email or password");
     }
