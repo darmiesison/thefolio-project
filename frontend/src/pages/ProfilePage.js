@@ -32,6 +32,13 @@ const ProfilePage = () => {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // Check file size (limit to 3MB)
+    const maxSize = 3 * 1024 * 1024; // 3MB
+    if (file.size > maxSize) {
+      setStatusMessage('Image size must be less than 3MB');
+      return;
+    }
+
     try {
       // Convert image to base64
       const reader = new FileReader();

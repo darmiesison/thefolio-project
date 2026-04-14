@@ -26,7 +26,7 @@ app.use(cors({
 // Or allow all origins during development/testing:
 // app.use(cors());  - use this temporarily if you are unsure of your Vercel URL
 //ParseincomingJSONrequestbodies
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
 //Serveuploadedimagefilesaspublic URLs
 //e.g.http://localhost:5000/uploads/my-image.jpg
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
