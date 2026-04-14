@@ -195,7 +195,6 @@ const ProfilePage = () => {
             </p>
             <div className="profile-buttons">
               <button className="btn-change" onClick={() => fileInputRef.current?.click()}>Update Profile</button>
-              <button className="btn-view-posts" onClick={() => navigate('/my-posts')}>View My Posts</button>
               <button className="btn-change-password" onClick={() => setShowPasswordForm(!showPasswordForm)}>
                 {showPasswordForm ? 'Cancel' : 'Change Password'}
               </button>
@@ -230,9 +229,12 @@ const ProfilePage = () => {
           <>
             {user?.gender && <p><strong>Gender:</strong> {user?.gender}</p>}
             {user?.interestLevel && <p><strong>Interest Level:</strong> {user?.interestLevel}</p>}
-            <button className="btn-edit-profile" onClick={() => setIsEditingProfile(true)}>
-              Edit Profile Info
-            </button>
+            <div className="profile-info-buttons">
+              <button className="btn-edit-profile" onClick={() => setIsEditingProfile(true)}>
+                Edit Profile Info
+              </button>
+              <button className="btn-view-posts" onClick={() => navigate('/my-posts')}>View My Posts</button>
+            </div>
           </>
         ) : (
           <div className="edit-profile-form">
@@ -266,8 +268,11 @@ const ProfilePage = () => {
               </select>
             </div>
 
-            <button className="btn-save" onClick={handleSaveProfile}>Save Changes</button>
-            <button className="btn-cancel" onClick={() => setIsEditingProfile(false)}>Cancel</button>
+            <div className="profile-info-buttons">
+              <button className="btn-save" onClick={handleSaveProfile}>Save Changes</button>
+              <button className="btn-cancel" onClick={() => setIsEditingProfile(false)}>Cancel</button>
+              <button className="btn-view-posts" onClick={() => navigate('/my-posts')}>View My Posts</button>
+            </div>
           </div>
         )}
       </div>
