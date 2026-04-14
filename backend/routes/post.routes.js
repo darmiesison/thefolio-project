@@ -33,7 +33,7 @@ router.get('/', protect, async (req, res) => {
         authorId: post.authorId.toString(),
         author_name: author?.name || 'Unknown',
         author_pic: author?.profile_pic && author.profile_pic.startsWith('data:') ? author.profile_pic : buildImageUrl(req, author?.profile_pic || ''),
-        image_url: post.image || '',
+        image_url: buildImageUrl(req, post.image || ''),
         liked: post.likedBy.includes(req.user.id),
         likes: post.likedBy.length,
         comments_count: post.comments.length
@@ -64,7 +64,7 @@ router.get('/my-posts', protect, async (req, res) => {
         authorId: post.authorId.toString(),
         author_name: author?.name || 'Unknown',
         author_pic: author?.profile_pic && author.profile_pic.startsWith('data:') ? author.profile_pic : buildImageUrl(req, author?.profile_pic || ''),
-        image_url: post.image || '',
+        image_url: buildImageUrl(req, post.image || ''),
         liked: post.likedBy.includes(userId),
         likes: post.likedBy.length,
         comments_count: post.comments.length
@@ -91,7 +91,7 @@ router.get('/:id', protect, async (req, res) => {
       authorId: post.authorId.toString(),
       author_name: author?.name || 'Unknown',
       author_pic: author?.profile_pic && author.profile_pic.startsWith('data:') ? author.profile_pic : buildImageUrl(req, author?.profile_pic || ''),
-      image_url: post.image || '',
+      image_url: buildImageUrl(req, post.image || ''),
       liked: post.likedBy.includes(req.user.id),
       likes: post.likedBy.length,
       comments_count: post.comments.length
@@ -141,7 +141,7 @@ router.post('/', protect, memberOrAdmin, async (req, res) => {
       id: post._id.toString(),
       author_name: req.user.name,
       author_pic: req.user.profile_pic && req.user.profile_pic.startsWith('data:') ? req.user.profile_pic : buildImageUrl(req, req.user.profile_pic || ''),
-      image_url: post.image, // Return the actual stored image (could be base64 or empty string)
+      image_url: buildImageUrl(req, post.image || ''), // Return the actual stored image using buildImageUrl
       liked: false,
       likes: 0,
       comments_count: 0
@@ -190,7 +190,7 @@ router.put('/:id', protect, memberOrAdmin, async (req, res) => {
       authorId: post.authorId.toString(),
       author_name: req.user.name,
       author_pic: req.user.profile_pic && req.user.profile_pic.startsWith('data:') ? req.user.profile_pic : buildImageUrl(req, req.user.profile_pic || ''),
-      image_url: post.image || '',
+      image_url: buildImageUrl(req, post.image || ''),
       liked: post.likedBy.includes(userId),
       likes: post.likedBy.length,
       comments_count: post.comments.length
