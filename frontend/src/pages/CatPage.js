@@ -98,15 +98,26 @@ function CatPage() {
       let imageBase64 = null;
       if (newPostImage) {
         console.log("Starting FileReader for:", newPostImage.name);
-        const reader = new FileReader();
-        imageBase64 = await new Promise((resolve) => {
+        imageBase64 = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
           reader.onload = (event) => {
-            console.log("FileReader onload - result length:", event.target.result.length);
-            resolve(event.target.result);
+            const result = event.target.result;
+            console.log("FileReader onload - result type:", typeof result);
+            console.log("FileReader onload - result length:", result ? result.length : 0);
+            if (result) {
+              console.log("FileReader first 100 chars:", result.substring(0, 100));
+              resolve(result);
+            } else {
+              reject(new Error("FileReader returned empty result"));
+            }
+          };
+          reader.onerror = (event) => {
+            console.error("FileReader error:", event);
+            reject(event.target.error);
           };
           reader.readAsDataURL(newPostImage);
         });
-        console.log("FileReader completed - imageBase64 length:", imageBase64.length);
+        console.log("FileReader completed - imageBase64 length:", imageBase64 ? imageBase64.length : 0);
       } else {
         console.log("No image selected, imageBase64 will be null");
       }

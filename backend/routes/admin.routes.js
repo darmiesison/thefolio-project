@@ -112,8 +112,9 @@ router.get('/posts', async (req, res) => {
     const enrichedPosts = await Promise.all(posts.map(async (post) => {
       const author = await User.findById(post.authorId).select('name profile_pic');
       const postObj = post.toObject();
+      const { image: rawImage, ...postWithoutImage } = postObj; // Exclude raw image field
       return {
-        ...postObj,
+        ...postWithoutImage,
         id: post._id.toString(),
         author_name: author?.name || 'Unknown',
         author_pic: buildImageUrl(req, author?.profile_pic) || '',

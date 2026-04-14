@@ -73,9 +73,17 @@ function PostDetailPage() {
       // Convert image to base64 if exists
       let imageBase64 = null;
       if (editImage) {
-        const reader = new FileReader();
-        imageBase64 = await new Promise((resolve) => {
-          reader.onload = (event) => resolve(event.target.result);
+        imageBase64 = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            const result = event.target.result;
+            if (result) {
+              resolve(result);
+            } else {
+              reject(new Error("FileReader returned empty result"));
+            }
+          };
+          reader.onerror = (event) => reject(event.target.error);
           reader.readAsDataURL(editImage);
         });
       }

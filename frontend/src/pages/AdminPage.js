@@ -44,6 +44,14 @@ const AdminPage = () => {
   const fetchPosts = async () => {
     try {
       const response = await API.get('/admin/posts');
+      console.log("Admin posts response:", response.data);
+      if (response.data.length > 0) {
+        console.log("First post:", response.data[0]);
+        console.log("First post image_url length:", response.data[0].image_url ? response.data[0].image_url.length : 0);
+        if (response.data[0].image_url) {
+          console.log("First 100 chars:", response.data[0].image_url.substring(0, 100));
+        }
+      }
       setPosts(response.data);
     } catch (err) {
       setStatusMessage(err.response?.data?.message || 'Unable to load posts');
@@ -52,6 +60,8 @@ const AdminPage = () => {
 
   const getImageUrl = (image) => {
     if (!image) return null;
+    // If it's a base64 data URL, return as-is (no need to construct URL)
+    if (image.startsWith('data:')) return image;
     // If it's already a full URL, return as-is
     if (image.startsWith('http://') || image.startsWith('https://')) return image;
     // Otherwise, construct the full URL from the filename
