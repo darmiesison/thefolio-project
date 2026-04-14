@@ -133,7 +133,7 @@ router.post('/', protect, memberOrAdmin, async (req, res) => {
     console.log("Post created - stored image length:", post.image ? post.image.length : 0);
     
     const postObj = post.toObject();
-    const { image, ...postWithoutImage } = postObj; // Exclude raw image field
+    const { image: rawImage, ...postWithoutImage } = postObj; // Exclude raw image field using different var name
     
     // Always return the actual stored image, don't try to build URL
     const responseObj = {
