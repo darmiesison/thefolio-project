@@ -32,10 +32,10 @@ const ProfilePage = () => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Check file size (limit to 3MB)
-    const maxSize = 3 * 1024 * 1024; // 3MB
+    // Check file size (limit to 7MB)
+    const maxSize = 7 * 1024 * 1024; // 7MB
     if (file.size > maxSize) {
-      setStatusMessage('Image size must be less than 3MB');
+      setStatusMessage('Image size must be less than 7MB');
       return;
     }
 
