@@ -103,6 +103,8 @@ router.post('/', protect, memberOrAdmin, async (req, res) => {
   try {
     const { content, image } = req.body;
     
+    console.log("Creating post - image length:", image ? image.length : 0);
+    
     // Ensure authorId is a string
     const authorId = req.user.id && typeof req.user.id === 'object' && req.user.id.toString 
       ? req.user.id.toString() 
@@ -116,13 +118,15 @@ router.post('/', protect, memberOrAdmin, async (req, res) => {
       image: image || '' // Store base64 image directly
     });
     
+    console.log("Post created - stored image length:", post.image ? post.image.length : 0);
+    
     const postObj = post.toObject();
     res.status(201).json({
       ...postObj,
       id: post._id.toString(),
       author_name: req.user.name,
       author_pic: req.user.profile_pic && req.user.profile_pic.startsWith('data:') ? req.user.profile_pic : buildImageUrl(req, req.user.profile_pic || ''),
-      image_url: image || '',
+      image_url: post.image && post.image.startsWith('data:') ? post.image : buildImageUrl(req, post.image),
       liked: false,
       likes: 0,
       comments_count: 0

@@ -94,6 +94,10 @@ function CatPage() {
         content: newPost.trim(),
         image: imageBase64
       });
+      
+      console.log("Post response:", response.data);
+      console.log("Image URL in response:", response.data.image_url);
+      
       const commentsResponse = await API.get(`/comments/${response.data.id}`);
       setPosts([{ ...response.data, comments: commentsResponse.data }, ...posts]);
       setNewPost("");
