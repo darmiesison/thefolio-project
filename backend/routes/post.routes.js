@@ -26,13 +26,14 @@ router.get('/', protect, async (req, res) => {
     const enrichedPosts = await Promise.all(posts.map(async (post) => {
       const author = await User.findById(post.authorId).select('name profile_pic');
       const postObj = post.toObject();
+      const { image, ...postWithoutImage } = postObj; // Exclude raw image field
       return {
-        ...postObj,
+        ...postWithoutImage,
         id: post._id.toString(),
         authorId: post.authorId.toString(),
         author_name: author?.name || 'Unknown',
         author_pic: author?.profile_pic && author.profile_pic.startsWith('data:') ? author.profile_pic : buildImageUrl(req, author?.profile_pic || ''),
-        image_url: post.image && post.image.startsWith('data:') ? post.image : buildImageUrl(req, post.image),
+        image_url: post.image || '',
         liked: post.likedBy.includes(req.user.id),
         likes: post.likedBy.length,
         comments_count: post.comments.length
@@ -56,13 +57,14 @@ router.get('/my-posts', protect, async (req, res) => {
     const enrichedPosts = await Promise.all(posts.map(async (post) => {
       const author = await User.findById(post.authorId).select('name profile_pic');
       const postObj = post.toObject();
+      const { image, ...postWithoutImage } = postObj; // Exclude raw image field
       return {
-        ...postObj,
+        ...postWithoutImage,
         id: post._id.toString(),
         authorId: post.authorId.toString(),
         author_name: author?.name || 'Unknown',
         author_pic: author?.profile_pic && author.profile_pic.startsWith('data:') ? author.profile_pic : buildImageUrl(req, author?.profile_pic || ''),
-        image_url: post.image && post.image.startsWith('data:') ? post.image : buildImageUrl(req, post.image),
+        image_url: post.image || '',
         liked: post.likedBy.includes(userId),
         likes: post.likedBy.length,
         comments_count: post.comments.length
@@ -82,13 +84,14 @@ router.get('/:id', protect, async (req, res) => {
     
     const author = await User.findById(post.authorId).select('name profile_pic');
     const postObj = post.toObject();
+    const { image, ...postWithoutImage } = postObj; // Exclude raw image field
     res.json({
-      ...postObj,
+      ...postWithoutImage,
       id: post._id.toString(),
       authorId: post.authorId.toString(),
       author_name: author?.name || 'Unknown',
       author_pic: author?.profile_pic && author.profile_pic.startsWith('data:') ? author.profile_pic : buildImageUrl(req, author?.profile_pic || ''),
-      image_url: post.image && post.image.startsWith('data:') ? post.image : buildImageUrl(req, post.image),
+      image_url: post.image || '',
       liked: post.likedBy.includes(req.user.id),
       likes: post.likedBy.length,
       comments_count: post.comments.length
@@ -171,8 +174,9 @@ router.put('/:id', protect, memberOrAdmin, async (req, res) => {
     await post.save();
     
     const postObj = post.toObject();
+    const { image: rawImage, ...postWithoutImage } = postObj; // Exclude raw image field
     res.json({
-      ...postObj,
+      ...postWithoutImage,
       id: post._id.toString(),
       authorId: post.authorId.toString(),
       author_name: req.user.name,
@@ -185,8 +189,6 @@ router.put('/:id', protect, memberOrAdmin, async (req, res) => {
   } catch (err) {
     console.error("Update post error:", err);
     res.status(500).json({ message: err.message });
-  }
-});
   }
 });
 
