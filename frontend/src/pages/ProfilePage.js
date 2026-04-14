@@ -119,18 +119,19 @@ const ProfilePage = () => {
 
   const handleSaveProfile = async () => {
     try {
-      const updateData = new FormData();
-      if (editForm.gender) updateData.append('gender', editForm.gender);
-      if (editForm.interestLevel) updateData.append('interestLevel', editForm.interestLevel);
-
-      const response = await API.put('/auth/profile', updateData);
+      const response = await API.put('/auth/profile', {
+        gender: editForm.gender,
+        interestLevel: editForm.interestLevel || null
+      });
       updateUser(response.data);
       setStatusMessage('Profile updated successfully!');
       setIsEditingProfile(false);
       setTimeout(() => setStatusMessage(''), 3000);
     } catch (err) {
       console.error('Profile update error:', err);
-      setStatusMessage('Failed to update profile.');
+      const errorMsg = err.response?.data?.message || err.message || 'Failed to update profile';
+      setStatusMessage(errorMsg);
+      setTimeout(() => setStatusMessage(''), 5000);
     }
   };
 
@@ -238,12 +239,9 @@ const ProfilePage = () => {
           <>
             <p><strong>Gender:</strong> {user?.gender}</p>
             {user?.interestLevel && <p><strong>Interest Level:</strong> {user?.interestLevel}</p>}
-            <div className="profile-info-buttons">
-              <button className="btn-edit-profile" onClick={() => setIsEditingProfile(true)}>
-                Edit Profile Info
-              </button>
-              <button className="btn-view-posts" onClick={() => navigate('/my-posts')}>View My Posts</button>
-            </div>
+            <button className="btn-edit-profile" onClick={() => setIsEditingProfile(true)}>
+              Edit Profile Info
+            </button>
           </>
         ) : (
           <div className="edit-profile-form">
@@ -278,13 +276,14 @@ const ProfilePage = () => {
               </select>
             </div>
 
-            <div className="profile-info-buttons">
+            <div className="form-buttons">
               <button className="btn-save" onClick={handleSaveProfile}>Save Changes</button>
               <button className="btn-cancel" onClick={() => setIsEditingProfile(false)}>Cancel</button>
-              <button className="btn-view-posts" onClick={() => navigate('/my-posts')}>View My Posts</button>
             </div>
           </div>
         )}
+
+        <button className="btn-view-posts" onClick={() => navigate('/my-posts')}>View My Posts</button>
       </div>
 
       {showPasswordForm && (

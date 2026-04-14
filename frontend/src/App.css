@@ -1165,6 +1165,24 @@ footer {
   margin-top: 0;
 }
 
+.form-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.form-buttons .btn-save,
+.form-buttons .btn-cancel {
+  flex: 1;
+}
+
+.profile-info .btn-view-posts {
+  display: block;
+  width: 100%;
+  margin-top: 15px;
+  padding: 12px 20px;
+}
+
 .edit-profile-form {
   background-color: #f5f5f5;
   padding: 15px;
