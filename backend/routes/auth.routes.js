@@ -27,6 +27,11 @@ const buildImageUrl = (req, image) => {
 router.post('/register', async (req, res) => {
   const { name, email, password, gender, interestLevel } = req.body;
   try {
+    // Validate required fields
+    if (!gender) {
+      return res.status(400).json({ message: 'Gender is required' });
+    }
+
     const emailExists = await User.findOne({ email: { $regex: email, $options: 'i' } });
     if (emailExists)
       return res.status(400).json({ message: 'Email is already registered' });
@@ -40,7 +45,7 @@ router.post('/register', async (req, res) => {
       name, 
       email, 
       password: hashedPassword,
-      gender: gender || null,
+      gender: gender,
       interestLevel: interestLevel || null,
     });
 
@@ -88,6 +93,7 @@ router.post('/login', async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
+        gender: user.gender,
         profile_pic: user.profile_pic && user.profile_pic.startsWith('data:') ? user.profile_pic : buildImageUrl(req, user.profile_pic),
       },
     });
@@ -105,7 +111,7 @@ router.get('/me', protect, async (req, res) => {
     const userData = user.toObject();
     userData.id = user._id.toString();
     userData.profile_pic = userData.profile_pic && userData.profile_pic.startsWith('data:') ? userData.profile_pic : buildImageUrl(req, userData.profile_pic);
-    userData.gender = user.gender || null;
+    userData.gender = user.gender;
     userData.interestLevel = user.interestLevel || null;
     res.json(userData);
   } catch (err) {
@@ -138,7 +144,7 @@ router.put('/profile', protect, async (req, res) => {
     if (name) updateData.name = name;
     if (bio !== undefined) updateData.bio = bio;
     if (profilePicToSave) updateData.profile_pic = profilePicToSave;
-    if (gender !== undefined) updateData.gender = gender || null;
+    if (gender) updateData.gender = gender;
     if (interestLevel !== undefined) updateData.interestLevel = interestLevel || null;
 
     const user = await User.findByIdAndUpdate(
@@ -153,7 +159,7 @@ router.put('/profile', protect, async (req, res) => {
     userData.profile_pic = userData.profile_pic && userData.profile_pic.startsWith('data:') 
       ? userData.profile_pic 
       : buildImageUrl(req, userData.profile_pic);
-    userData.gender = user.gender || null;
+    userData.gender = user.gender;
     userData.interestLevel = user.interestLevel || null;
 
     res.json(userData);

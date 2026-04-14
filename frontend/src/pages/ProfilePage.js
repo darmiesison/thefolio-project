@@ -236,7 +236,7 @@ const ProfilePage = () => {
         
         {!isEditingProfile ? (
           <>
-            {user?.gender && <p><strong>Gender:</strong> {user?.gender}</p>}
+            <p><strong>Gender:</strong> {user?.gender}</p>
             {user?.interestLevel && <p><strong>Interest Level:</strong> {user?.interestLevel}</p>}
             <div className="profile-info-buttons">
               <button className="btn-edit-profile" onClick={() => setIsEditingProfile(true)}>
@@ -254,8 +254,9 @@ const ProfilePage = () => {
                 name="gender"
                 value={editForm.gender}
                 onChange={handleEditChange}
+                required
               >
-                <option value="">Not specified</option>
+                <option value="">Select Gender</option>
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
                 <option value="Other">Other</option>

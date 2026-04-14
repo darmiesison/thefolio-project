@@ -41,7 +41,7 @@ const UserSchema = new mongoose.Schema(
     gender: {
       type: String,
       enum: ['Male', 'Female', 'Other'],
-      default: null,
+      required: true,
     },
     interestLevel: {
       type: String,

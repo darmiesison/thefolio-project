@@ -21,6 +21,7 @@ function RegisterPage() {
     if (!formData.email.includes("@")) tempErrors.email = "Valid email is required";
     if (!formData.password) tempErrors.password = "Password is required";
     if (formData.password !== formData.confirmPassword) tempErrors.match = "Passwords do not match";
+    if (!formData.gender) tempErrors.gender = "Gender is required";
     
     setErrors(tempErrors);
     return Object.keys(tempErrors).length === 0;
@@ -36,7 +37,7 @@ function RegisterPage() {
           name: formData.username,
           email: formData.email,
           password: formData.password,
-          gender: formData.gender || null,
+          gender: formData.gender,
           interestLevel: formData.interestLevel || null,
         });
 
@@ -95,12 +96,14 @@ function RegisterPage() {
         <select
           value={formData.gender}
           onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
+          required
         >
-          <option value="">Select Gender (Optional)</option>
+          <option value="">Select Gender</option>
           <option value="Male">Male</option>
           <option value="Female">Female</option>
           <option value="Other">Other</option>
         </select>
+        <div className="error">{errors.gender}</div>
 
         <label>Interest Level</label>
         <select
