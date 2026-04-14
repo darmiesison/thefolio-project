@@ -59,11 +59,17 @@ function CatPage() {
 
   const handleNewPostImage = (e) => {
     const file = e.target.files?.[0] || null;
+    console.log("=== handleNewPostImage called ===");
+    console.log("File selected:", file ? file.name : "null");
+    console.log("File size:", file ? file.size : "N/A");
+    console.log("File type:", file ? file.type : "N/A");
+    
     if (file) {
       // Check file size (limit to 7MB)
       const maxSize = 7 * 1024 * 1024; // 7MB
       if (file.size > maxSize) {
         setStatusMessage('Image size must be less than 7MB');
+        console.log("File too large, rejecting");
         return;
       }
     }
@@ -80,14 +86,29 @@ function CatPage() {
     try {
       setLoading(true);
       
+      console.log("=== handleCreatePost called ===");
+      console.log("newPostImage state:", newPostImage);
+      console.log("newPostImage is null:", newPostImage === null);
+      console.log("newPostImage is undefined:", newPostImage === undefined);
+      console.log("newPostImage name:", newPostImage?.name);
+      console.log("newPostImage size:", newPostImage?.size);
+      console.log("newPostImage type:", newPostImage?.type);
+      
       // Convert image to base64 if exists
       let imageBase64 = null;
       if (newPostImage) {
+        console.log("Starting FileReader for:", newPostImage.name);
         const reader = new FileReader();
         imageBase64 = await new Promise((resolve) => {
-          reader.onload = (event) => resolve(event.target.result);
+          reader.onload = (event) => {
+            console.log("FileReader onload - result length:", event.target.result.length);
+            resolve(event.target.result);
+          };
           reader.readAsDataURL(newPostImage);
         });
+        console.log("FileReader completed - imageBase64 length:", imageBase64.length);
+      } else {
+        console.log("No image selected, imageBase64 will be null");
       }
 
       const payload = {
