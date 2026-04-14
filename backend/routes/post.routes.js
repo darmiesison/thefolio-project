@@ -121,16 +121,23 @@ router.post('/', protect, memberOrAdmin, async (req, res) => {
     console.log("Post created - stored image length:", post.image ? post.image.length : 0);
     
     const postObj = post.toObject();
-    res.status(201).json({
-      ...postObj,
+    const { image, ...postWithoutImage } = postObj; // Exclude raw image field
+    
+    // Always return the actual stored image, don't try to build URL
+    const responseObj = {
+      ...postWithoutImage,
       id: post._id.toString(),
       author_name: req.user.name,
       author_pic: req.user.profile_pic && req.user.profile_pic.startsWith('data:') ? req.user.profile_pic : buildImageUrl(req, req.user.profile_pic || ''),
-      image_url: post.image && post.image.startsWith('data:') ? post.image : buildImageUrl(req, post.image),
+      image_url: post.image, // Return the actual stored image (could be base64 or empty string)
       liked: false,
       likes: 0,
       comments_count: 0
-    });
+    };
+    
+    console.log("Response image_url length:", responseObj.image_url ? responseObj.image_url.length : 0);
+    
+    res.status(201).json(responseObj);
   } catch (err) {
     console.error("Create post error:", err);
     res.status(500).json({ message: err.message });
