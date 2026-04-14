@@ -31,8 +31,8 @@ router.get('/', protect, async (req, res) => {
         id: post._id.toString(),
         authorId: post.authorId.toString(),
         author_name: author?.name || 'Unknown',
-        author_pic: author?.profile_pic ? buildImageUrl(req, author.profile_pic) : '',
-        image_url: buildImageUrl(req, post.image),
+        author_pic: author?.profile_pic && author.profile_pic.startsWith('data:') ? author.profile_pic : buildImageUrl(req, author?.profile_pic || ''),
+        image_url: post.image && post.image.startsWith('data:') ? post.image : buildImageUrl(req, post.image),
         liked: post.likedBy.includes(req.user.id),
         likes: post.likedBy.length,
         comments_count: post.comments.length
@@ -61,8 +61,8 @@ router.get('/my-posts', protect, async (req, res) => {
         id: post._id.toString(),
         authorId: post.authorId.toString(),
         author_name: author?.name || 'Unknown',
-        author_pic: author?.profile_pic ? buildImageUrl(req, author.profile_pic) : '',
-        image_url: buildImageUrl(req, post.image),
+        author_pic: author?.profile_pic && author.profile_pic.startsWith('data:') ? author.profile_pic : buildImageUrl(req, author?.profile_pic || ''),
+        image_url: post.image && post.image.startsWith('data:') ? post.image : buildImageUrl(req, post.image),
         liked: post.likedBy.includes(userId),
         likes: post.likedBy.length,
         comments_count: post.comments.length
@@ -87,8 +87,8 @@ router.get('/:id', protect, async (req, res) => {
       id: post._id.toString(),
       authorId: post.authorId.toString(),
       author_name: author?.name || 'Unknown',
-      author_pic: author?.profile_pic ? buildImageUrl(req, author.profile_pic) : '',
-      image_url: buildImageUrl(req, post.image),
+      author_pic: author?.profile_pic && author.profile_pic.startsWith('data:') ? author.profile_pic : buildImageUrl(req, author?.profile_pic || ''),
+      image_url: post.image && post.image.startsWith('data:') ? post.image : buildImageUrl(req, post.image),
       liked: post.likedBy.includes(req.user.id),
       likes: post.likedBy.length,
       comments_count: post.comments.length
@@ -99,13 +99,9 @@ router.get('/:id', protect, async (req, res) => {
 });
 
 // POST /api/posts
-// Note: upload.single('image') is still used to parse FormData, but files are ignored on Vercel
-// (Vercel has no persistent storage for file uploads)
-router.post('/', protect, memberOrAdmin, upload.single('image'), async (req, res) => {
+router.post('/', protect, memberOrAdmin, async (req, res) => {
   try {
-    const { content } = req.body;
-    // Save the image filename if a file was uploaded
-    const image = req.file ? req.file.filename : '';
+    const { content, image } = req.body;
     
     // Ensure authorId is a string
     const authorId = req.user.id && typeof req.user.id === 'object' && req.user.id.toString 
@@ -117,7 +113,7 @@ router.post('/', protect, memberOrAdmin, upload.single('image'), async (req, res
       authorName: req.user.name,
       authorPic: req.user.profile_pic || '',
       content: content || '',
-      image: image
+      image: image || '' // Store base64 image directly
     });
     
     const postObj = post.toObject();
@@ -125,8 +121,8 @@ router.post('/', protect, memberOrAdmin, upload.single('image'), async (req, res
       ...postObj,
       id: post._id.toString(),
       author_name: req.user.name,
-      author_pic: buildImageUrl(req, req.user.profile_pic || ''),
-      image_url: buildImageUrl(req, image),
+      author_pic: req.user.profile_pic && req.user.profile_pic.startsWith('data:') ? req.user.profile_pic : buildImageUrl(req, req.user.profile_pic || ''),
+      image_url: image || '',
       liked: false,
       likes: 0,
       comments_count: 0
@@ -138,9 +134,9 @@ router.post('/', protect, memberOrAdmin, upload.single('image'), async (req, res
 });
 
 // PUT /api/posts/:id
-router.put('/:id', protect, memberOrAdmin, upload.single('image'), async (req, res) => {
+router.put('/:id', protect, memberOrAdmin, async (req, res) => {
   try {
-    const { content } = req.body;
+    const { content, image } = req.body;
     const post = await CatPost.findById(req.params.id);
     
     if (!post) return res.status(404).json({ message: 'Post not found' });
@@ -158,8 +154,8 @@ router.put('/:id', protect, memberOrAdmin, upload.single('image'), async (req, r
       return res.status(403).json({ message: 'Not authorized' });
     
     post.content = content || post.content;
-    if (req.file) {
-      post.image = req.file.filename;
+    if (image) {
+      post.image = image; // Store base64 image directly
     }
     await post.save();
     
@@ -169,8 +165,8 @@ router.put('/:id', protect, memberOrAdmin, upload.single('image'), async (req, r
       id: post._id.toString(),
       authorId: post.authorId.toString(),
       author_name: req.user.name,
-      author_pic: buildImageUrl(req, req.user.profile_pic || ''),
-      image_url: buildImageUrl(req, post.image),
+      author_pic: req.user.profile_pic && req.user.profile_pic.startsWith('data:') ? req.user.profile_pic : buildImageUrl(req, req.user.profile_pic || ''),
+      image_url: post.image || '',
       liked: post.likedBy.includes(userId),
       likes: post.likedBy.length,
       comments_count: post.comments.length
@@ -178,6 +174,8 @@ router.put('/:id', protect, memberOrAdmin, upload.single('image'), async (req, r
   } catch (err) {
     console.error("Update post error:", err);
     res.status(500).json({ message: err.message });
+  }
+});
   }
 });
 

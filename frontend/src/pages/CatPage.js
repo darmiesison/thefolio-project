@@ -59,6 +59,14 @@ function CatPage() {
 
   const handleNewPostImage = (e) => {
     const file = e.target.files?.[0] || null;
+    if (file) {
+      // Check file size (limit to 7MB)
+      const maxSize = 7 * 1024 * 1024; // 7MB
+      if (file.size > maxSize) {
+        setStatusMessage('Image size must be less than 7MB');
+        return;
+      }
+    }
     setNewPostImage(file);
   };
 
@@ -69,13 +77,23 @@ function CatPage() {
       return;
     }
 
-    const formData = new FormData();
-    formData.append("content", newPost.trim());
-    if (newPostImage) formData.append("image", newPostImage);
-
     try {
       setLoading(true);
-      const response = await API.post("/posts", formData);
+      
+      // Convert image to base64 if exists
+      let imageBase64 = null;
+      if (newPostImage) {
+        const reader = new FileReader();
+        imageBase64 = await new Promise((resolve) => {
+          reader.onload = (event) => resolve(event.target.result);
+          reader.readAsDataURL(newPostImage);
+        });
+      }
+
+      const response = await API.post("/posts", {
+        content: newPost.trim(),
+        image: imageBase64
+      });
       const commentsResponse = await API.get(`/comments/${response.data.id}`);
       setPosts([{ ...response.data, comments: commentsResponse.data }, ...posts]);
       setNewPost("");

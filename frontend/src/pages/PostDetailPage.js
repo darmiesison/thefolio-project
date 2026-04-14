@@ -53,6 +53,14 @@ function PostDetailPage() {
 
   const handleEditImageChange = (e) => {
     const file = e.target.files?.[0] || null;
+    if (file) {
+      // Check file size (limit to 7MB)
+      const maxSize = 7 * 1024 * 1024; // 7MB
+      if (file.size > maxSize) {
+        setStatusMessage('Image size must be less than 7MB');
+        return;
+      }
+    }
     setEditImage(file);
     setEditPreview(file ? URL.createObjectURL(file) : "");
   };
@@ -61,12 +69,21 @@ function PostDetailPage() {
     e.preventDefault();
     try {
       setLoading(true);
-      const formData = new FormData();
-      formData.append("content", editContent.trim());
+      
+      // Convert image to base64 if exists
+      let imageBase64 = null;
       if (editImage) {
-        formData.append("image", editImage);
+        const reader = new FileReader();
+        imageBase64 = await new Promise((resolve) => {
+          reader.onload = (event) => resolve(event.target.result);
+          reader.readAsDataURL(editImage);
+        });
       }
-      const response = await API.put(`/posts/${id}`, formData);
+
+      const response = await API.put(`/posts/${id}`, {
+        content: editContent.trim(),
+        image: imageBase64
+      });
       setPost(response.data);
       setStatusMessage("Post updated successfully.");
       setEditMode(false);
