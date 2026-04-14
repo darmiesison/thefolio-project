@@ -114,18 +114,15 @@ router.get('/me', protect, async (req, res) => {
 });
 
 // PUT /api/auth/profile
-router.put('/profile', protect, upload.single('profilePic'), async (req, res) => {
+router.put('/profile', protect, async (req, res) => {
   try {
     const { name, bio, gender, interestLevel, profile_pic } = req.body;
     
-    // Handle both file upload and base64 image
+    // Handle base64 image from frontend
     let profilePicToSave = null;
     if (profile_pic) {
       // Base64 image from frontend
       profilePicToSave = profile_pic;
-    } else if (req.file) {
-      // File upload from frontend
-      profilePicToSave = req.file.filename;
     }
 
     if (name) {

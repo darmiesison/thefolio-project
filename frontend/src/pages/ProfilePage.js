@@ -47,7 +47,9 @@ const ProfilePage = () => {
           setTimeout(() => setStatusMessage(''), 3000);
         } catch (err) {
           console.error('Profile update error:', err);
-          setStatusMessage('Failed to update profile picture.');
+          const errorMsg = err.response?.data?.message || err.message || 'Failed to update profile picture';
+          setStatusMessage(errorMsg);
+          setTimeout(() => setStatusMessage(''), 5000);
         }
       };
       reader.readAsDataURL(file);
