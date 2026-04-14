@@ -106,7 +106,16 @@ router.post('/', protect, memberOrAdmin, async (req, res) => {
   try {
     const { content, image } = req.body;
     
-    console.log("Creating post - image length:", image ? image.length : 0);
+    console.log("=== POST /posts DEBUG ===");
+    console.log("req.body keys:", Object.keys(req.body));
+    console.log("content:", content);
+    console.log("image type:", typeof image);
+    console.log("image is null:", image === null);
+    console.log("image is undefined:", image === undefined);
+    console.log("image length:", image ? image.length : 0);
+    if (image && image.length > 0) {
+      console.log("image first 100 chars:", image.substring(0, 100));
+    }
     
     // Ensure authorId is a string
     const authorId = req.user.id && typeof req.user.id === 'object' && req.user.id.toString 

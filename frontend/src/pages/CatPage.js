@@ -90,10 +90,22 @@ function CatPage() {
         });
       }
 
-      const response = await API.post("/posts", {
+      const payload = {
         content: newPost.trim(),
         image: imageBase64
-      });
+      };
+      
+      console.log("=== Sending POST /posts ===");
+      console.log("Payload keys:", Object.keys(payload));
+      console.log("Content:", payload.content);
+      console.log("Image type:", typeof imageBase64);
+      console.log("Image is null:", imageBase64 === null);
+      if (imageBase64 && imageBase64.length > 0) {
+        console.log("Image length:", imageBase64.length);
+        console.log("Image first 100 chars:", imageBase64.substring(0, 100));
+      }
+
+      const response = await API.post("/posts", payload);
       
       console.log("Post response:", response.data);
       console.log("Image URL in response:", response.data.image_url);
