@@ -1,38 +1,32 @@
 export const breed = [
   {
     id: 1,
-    name: "Persian",
-    img: "assets/cat1.png",
-    desc: "Known for their long, luxurious coat and flat face. Persians are calm, gentle, and enjoy a quiet environment."
+    name: "Siamese",
+    img: "assets/siamese.png",
+    desc: "Vocal, social, and very intelligent cats with striking blue eyes."
   },
   {
     id: 2,
-    name: "Siamese",
-    img: "assets/cat2.png",
-    desc: "Highly intelligent and vocal. Siamese cats are social, affectionate, and love being the center of attention."
+    name: "Persian",
+    img: "assets/persian.png",
+    desc: "Long-haired, calm, and affectionate cats that love a cozy environment."
   },
   {
     id: 3,
     name: "Maine Coon",
-    img: "assets/cat3.png",
-    desc: "One of the largest domestic cat breeds. Maine Coons are friendly, playful, and great family companions."
+    img: "assets/mainecoon.png",
+    desc: "Large, friendly, and playful cats known for their tufted ears and bushy tails."
   },
   {
     id: 4,
-    name: "Bengal",
-    img: "assets/cat4.png",
-    desc: "Features a striking spotted or marbled coat. Bengals are energetic, playful, and require lots of stimulation."
+    name: "Ragdoll",
+    img: "assets/ragdoll.png",
+    desc: "Gentle and affectionate cats that enjoy cuddling and being held."
   },
   {
     id: 5,
-    name: "Ragdoll",
-    img: "assets/cat5.png",
-    desc: "Known for their blue eyes and color-point pattern. Ragdolls are gentle, laid-back, and love human companionship."
-  },
-  {
-    id: 6,
     name: "British Shorthair",
-    img: "assets/cat6.png",
-    desc: "Sturdy and muscular with a dense coat. British Shorthairs are calm, independent, and adaptable companions."
+    img: "assets/british-shorthair.png",
+    desc: "Round-faced, sturdy cats with plush fur, calm temperament, and loyal nature."
   }
 ];
