@@ -562,6 +562,12 @@ button:hover {
   align-items: center;
 }
 
+.composer-avatar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .composer-avatar img {
   width: 100px;
   height: 100px;
@@ -648,6 +654,9 @@ button:hover {
   object-fit: cover;
   border: 2px solid var(--primary);
   flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .author-info strong {
