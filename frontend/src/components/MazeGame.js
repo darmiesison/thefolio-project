@@ -34,6 +34,7 @@ function MazeGame() {
       setPos({ x: pos.x + dx, y: pos.y + dy });
     }
   };
+  // Keyboard controls
   useEffect(() => {
     const walk = (e) => {
 
@@ -56,7 +57,7 @@ function MazeGame() {
     window.addEventListener('keydown', walk);
     return () => window.removeEventListener('keydown', walk);
 
-  }, [pos, active, win]);
+  }, [pos, active, win, movePlayer]);
 
 
   // Timer
