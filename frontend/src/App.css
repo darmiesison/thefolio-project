@@ -1115,6 +1115,75 @@ footer {
   color: var(--secondary);
 }
 
+.maze-console-toggle {
+  background-color: var(--primary);
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 20px;
+  transition: background-color 0.3s ease;
+}
+
+.maze-console-toggle:hover {
+  background-color: var(--secondary);
+}
+
+.maze-console {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+  padding: 20px;
+  background-color: var(--card-bg);
+  border-radius: 12px;
+  border: 2px solid var(--primary);
+}
+
+.arrow-btn {
+  width: 60px;
+  height: 60px;
+  font-size: 28px;
+  border: 2px solid var(--primary);
+  background-color: var(--background);
+  color: var(--text-color);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.arrow-btn:active {
+  background-color: var(--primary);
+  color: white;
+  transform: scale(0.95);
+}
+
+.arrow-btn:hover {
+  background-color: var(--secondary);
+  color: white;
+}
+
+.arrow-middle {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+}
+
+.arrow-btn.up {
+  margin-bottom: 8px;
+}
+
+.arrow-btn.down {
+  margin-top: 8px;
+}
+
 /* ===== Profile Page Styles ===== */
 .profile-page {
   max-width: 600px;

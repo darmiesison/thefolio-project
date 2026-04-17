@@ -23,10 +23,17 @@ function MazeGame() {
   const [pos, setPos] = useState(startPos);
   const [active, setActive] = useState(false);
   const [time, setTime] = useState(0);
+  const [showConsole, setShowConsole] = useState(false);
 
   const win = pos.x === end.x && pos.y === end.y;
 
-  // Movement
+  // Movement handler
+  const movePlayer = (dx, dy) => {
+    if (!active || win) return;
+    if (maze[pos.y + dy][pos.x + dx] === 0) {
+      setPos({ x: pos.x + dx, y: pos.y + dy });
+    }
+  };
   useEffect(() => {
     const walk = (e) => {
 
@@ -42,10 +49,7 @@ function MazeGame() {
       if (keys[e.key]) {
         e.preventDefault();
         const [dx,dy] = keys[e.key];
-
-        if (maze[pos.y + dy][pos.x + dx] === 0) {
-          setPos({ x: pos.x + dx, y: pos.y + dy });
-        }
+        movePlayer(dx, dy);
       }
     };
 
@@ -103,6 +107,21 @@ function MazeGame() {
               ))
             )}
           </div>
+
+          <button className="maze-console-toggle" onClick={() => setShowConsole(!showConsole)}>
+            {showConsole ? '🎮 Hide Controls' : '🎮 Show Controls'}
+          </button>
+
+          {showConsole && (
+            <div className="maze-console">
+              <button className="arrow-btn up" onClick={() => movePlayer(0, -1)}>▲</button>
+              <div className="arrow-middle">
+                <button className="arrow-btn left" onClick={() => movePlayer(-1, 0)}>◄</button>
+                <button className="arrow-btn down" onClick={() => movePlayer(0, 1)}>▼</button>
+                <button className="arrow-btn right" onClick={() => movePlayer(1, 0)}>►</button>
+              </div>
+            </div>
+          )}
         </>
       )}
 
