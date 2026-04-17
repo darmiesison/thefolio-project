@@ -566,6 +566,9 @@ button:hover {
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 100px;
+  height: 100px;
+  flex-shrink: 0;
 }
 
 .composer-avatar img {
