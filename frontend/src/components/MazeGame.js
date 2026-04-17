@@ -57,7 +57,7 @@ function MazeGame() {
     window.addEventListener('keydown', walk);
     return () => window.removeEventListener('keydown', walk);
 
-  }, [movePlayer]);
+  }, [movePlayer, active, win]);
 
 
   // Timer
