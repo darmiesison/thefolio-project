@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 const maze = [
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
@@ -28,12 +28,12 @@ function MazeGame() {
   const win = pos.x === end.x && pos.y === end.y;
 
   // Movement handler
-  const movePlayer = (dx, dy) => {
+  const movePlayer = useCallback((dx, dy) => {
     if (!active || win) return;
     if (maze[pos.y + dy][pos.x + dx] === 0) {
       setPos({ x: pos.x + dx, y: pos.y + dy });
     }
-  };
+  }, [pos, active, win]);
   // Keyboard controls
   useEffect(() => {
     const walk = (e) => {
@@ -57,7 +57,7 @@ function MazeGame() {
     window.addEventListener('keydown', walk);
     return () => window.removeEventListener('keydown', walk);
 
-  }, [pos, active, win, movePlayer]);
+  }, [movePlayer]);
 
 
   // Timer
