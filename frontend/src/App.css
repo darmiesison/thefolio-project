@@ -657,6 +657,8 @@ button:hover {
   object-fit: cover;
   border: 2px solid var(--primary);
   flex-shrink: 0;
+  background-color: var(--soft);
+  display: block;
 }
 
 .author-info strong {
