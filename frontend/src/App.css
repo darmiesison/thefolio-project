@@ -271,6 +271,17 @@ section {
   border-radius: 10px;
 }
 
+.card .author-avatar {
+  width: 100px;
+  height: 100px;
+  min-width: 100px;
+  min-height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--primary);
+  background-color: var(--soft);
+}
+
 /* ===== Slider Animation ===== */
 .slider-container {
   overflow: hidden;
